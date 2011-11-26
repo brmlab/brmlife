@@ -20,6 +20,11 @@ public:
 
 	void on_tick(void);
 
+	~agent()
+	{
+		tile->on_agent_leave(*this);
+	};
+
 private:
 	/* Just for initial placement. */
 	void put_at(class tile &tile);

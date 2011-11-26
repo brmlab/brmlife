@@ -49,8 +49,6 @@ main(int argc, char *argv[])
 			usleep(1000000);
 			tick_id++;
 		}
-
-		/* TODO: destroy agent cleanly */
 	}
 
 	return 0;
