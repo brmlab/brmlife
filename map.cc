@@ -48,6 +48,13 @@ tile::tile_in_dir(int dir_x, int dir_y)
 
 
 void
+map::on_tick(void)
+{
+	for (int i = 0; i < w * h; i++)
+		tiles[i]->on_tick();
+}
+
+void
 map::print_map(void)
 {
 	for (int y = 0; y < h; y++) {
