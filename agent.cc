@@ -6,10 +6,9 @@
 #include "map.h"
 
 void
-agent::put_at(struct position *pos)
+agent::put_at(class tile &t)
 {
-	class tile *t = &pos->map->tile_at(*pos);
-	if (!t->on_agent_enter(this)) {
+	if (!t.on_agent_enter(*this)) {
 		std::cerr << "Collision.";
 		exit(EXIT_FAILURE);
 	}

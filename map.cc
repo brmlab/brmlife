@@ -5,17 +5,17 @@
 #include "map.h"
 
 bool
-tile::on_agent_enter(class agent *a)
+tile::on_agent_enter(class agent &a)
 {
 	if (agent) return false;
-	agent = a;
+	agent = &a;
 	return true;
 }
 
 void
-tile::on_agent_leave(class agent *a)
+tile::on_agent_leave(class agent &a)
 {
-	assert(a == agent);
+	assert(&a == agent);
 	agent = NULL;
 }
 
@@ -38,12 +38,12 @@ tile_ground::type_symbol(void)
 	return '.';
 }
 
-class position *
-position::next_in(int dir_x, int dir_y)
+class tile &
+tile::tile_in_dir(int dir_x, int dir_y)
 {
-	int x2 = (map->w + x + dir_x) % map->w;
-	int y2 = (map->h + y + dir_y) % map->h;
-	return new position(x2, y2, *map);
+	int x2 = (map.w + x + dir_x) % map.w;
+	int y2 = (map.h + y + dir_y) % map.h;
+	return map.tile_at(x2, y2);
 }
 
 
@@ -52,8 +52,7 @@ map::print_map(void)
 {
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			class position p = position(x, y, *this);
-			std::cout << tile_at(p).symbol();
+			std::cout << tile_at(x, y).symbol();
 		}
 		std::cout << '\n';
 	}

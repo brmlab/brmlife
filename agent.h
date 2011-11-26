@@ -1,19 +1,21 @@
 #ifndef BRMLIFE__AGENT_H
 #define BRMLIFE__AGENT_H
 
-class position;
+#include "map.h"
 
 class agent {
 public:
 	int id;
-	class position *pos;
+	class tile *tile;
 
-	agent(int id_, class position &pos_) : id (id_), pos (&pos_)
+	agent(int id_, class tile &tile_) : id (id_), tile (&tile_)
 	{
-		put_at(pos);
+		put_at(tile_);
 	};
 
-	void put_at(struct position *pos);
+private:
+	/* Just for initial placement. */
+	void put_at(class tile &tile);
 };
 
 #endif
