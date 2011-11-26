@@ -54,6 +54,12 @@ public:
 		return *tiles[y * w + x];
 	};
 
+	void on_tick(void)
+	{
+		for (int i = 0; i < w * h; i++)
+			tiles[i]->on_tick();
+	}
+
 	void print_map(void);
 };
 

@@ -43,6 +43,8 @@ main(int argc, char *argv[])
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
 
+		map.on_tick();
+
 		if (agent) {
 			agent->on_tick();
 			if (agent->conn && agent->conn->error) {
