@@ -36,10 +36,8 @@ public:
 	class tile **tiles;
 	int w, h;
 
-	map(int w_, int h_)
+	map(int w_, int h_) : w(w_), h(h_)
 	{
-		w = w_;
-		h = h_;
 		tiles = new class tile * [w * h];
 
 		for (int y = 0; y < h; y++) {
