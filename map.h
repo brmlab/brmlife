@@ -44,14 +44,14 @@ public:
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				tiles[y * h + x] = new tile_ground(x, y, *this);
+				tiles[y * w + x] = new tile_ground(x, y, *this);
 			}
 		}
 	};
 
 	class tile &tile_at(int x, int y)
 	{
-		return *tiles[y * h + x];
+		return *tiles[y * w + x];
 	};
 
 	void print_map(void);

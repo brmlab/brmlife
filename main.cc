@@ -8,7 +8,7 @@
 int
 main(int argc, char *argv[])
 {
-	class map map(10, 10);
+	class map map(40, 20);
 
 	srandom(time(NULL));
 
