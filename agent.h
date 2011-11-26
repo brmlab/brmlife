@@ -18,6 +18,8 @@ public:
 
 	bool move_dir(int dir_x, int dir_y);
 
+	void on_tick(void);
+
 private:
 	/* Just for initial placement. */
 	void put_at(class tile &tile);

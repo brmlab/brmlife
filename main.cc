@@ -40,13 +40,7 @@ main(int argc, char *argv[])
 			map.print_map();
 			std::cout << '\n';
 
-			char around[4] = {
-				agent.tile->tile_in_dir(0, -1).symbol(),
-				agent.tile->tile_in_dir(1, 0).symbol(),
-				agent.tile->tile_in_dir(0, 1).symbol(),
-				agent.tile->tile_in_dir(-1, 0).symbol(),
-			};
-			conn.senses(around);
+			agent.on_tick();
 
 			usleep(1000000);
 		}

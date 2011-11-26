@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "agent.h"
+#include "connection.h"
 #include "map.h"
 
 void
@@ -24,4 +25,16 @@ agent::move_dir(int dir_x, int dir_y)
 	tile->on_agent_leave(*this);
 	tile = t2;
 	return true;
+}
+
+void
+agent::on_tick(void)
+{
+	char around[4] = {
+		tile->tile_in_dir(0, -1).symbol(),
+		tile->tile_in_dir(1, 0).symbol(),
+		tile->tile_in_dir(0, 1).symbol(),
+		tile->tile_in_dir(-1, 0).symbol(),
+	};
+	conn.senses(around);
 }
