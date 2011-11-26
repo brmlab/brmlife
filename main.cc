@@ -48,6 +48,19 @@ main(int argc, char *argv[])
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
 
+		/* Drop disconnected agents. */
+
+		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
+		{
+next_agent:
+			if ((*agent)->conn && (*agent)->conn->error) {
+				delete *agent;
+				agent = agents.erase(agent);
+				if (agent != agents.end())
+					goto next_agent;
+			}
+		}
+
 		/* Accept new agents. */
 
 		int cfd = accept(lfd, NULL, NULL);
@@ -63,18 +76,8 @@ main(int argc, char *argv[])
 		/* Run on_tick everywhere. */
 
 		map.on_tick();
-
 		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
-		{
-next_agent:
 			(*agent)->on_tick();
-			if ((*agent)->conn && (*agent)->conn->error) {
-				delete *agent;
-				agent = agents.erase(agent);
-				if (agent != agents.end())
-					goto next_agent;
-			}
-		}
 
 		/* Finish a tick. */
 
