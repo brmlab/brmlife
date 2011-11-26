@@ -8,6 +8,7 @@
 class connection {
 public:
 	int fd;
+	bool error;
 
 	connection(int fd_) : fd(fd_) {}
 

@@ -47,6 +47,11 @@ main(int argc, char *argv[])
 
 		if (agent) {
 			agent->on_tick();
+			if (agent->conn && agent->conn->error) {
+				delete agent;
+				agent = NULL;
+			}
+
 		} else {
 			int cfd = accept(lfd, NULL, NULL);
 			if (cfd >= 0) {
