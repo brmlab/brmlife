@@ -3,12 +3,15 @@
 
 #include "map.h"
 
+class connection;
+
 class agent {
 public:
 	int id;
 	class tile *tile;
+	class connection &conn;
 
-	agent(int id_, class tile &tile_) : id (id_), tile (&tile_)
+	agent(int id_, class tile &tile_, class connection &conn_) : id (id_), tile (&tile_), conn (conn_)
 	{
 		put_at(tile_);
 	};
