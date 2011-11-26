@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 			if (cfd >= 0) {
 				class connection *conn = new class connection(cfd);
 				class tile &agentpos = map.tile_at(random() % map.w, random() % map.h);
-				agent = new class agent(0, agentpos, *conn);
+				agent = new class agent(0, agentpos, conn);
 			}
 		}
 

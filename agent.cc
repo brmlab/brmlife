@@ -37,5 +37,11 @@ agent::on_tick(void)
 		tile->tile_in_dir(0, 1).symbol(),
 		tile->tile_in_dir(-1, 0).symbol(),
 	};
-	conn.senses(tick_id, around);
+	conn->senses(tick_id, around);
 }
+
+agent::~agent()
+{
+	tile->on_agent_leave(*this);
+	delete conn;
+};

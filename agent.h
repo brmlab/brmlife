@@ -9,9 +9,9 @@ class agent {
 public:
 	int id;
 	class tile *tile;
-	class connection &conn;
+	class connection *conn;
 
-	agent(int id_, class tile &tile_, class connection &conn_) : id (id_), tile (&tile_), conn (conn_)
+	agent(int id_, class tile &tile_, class connection *conn_) : id (id_), tile (&tile_), conn (conn_)
 	{
 		put_at(tile_);
 	};
@@ -20,10 +20,7 @@ public:
 
 	void on_tick(void);
 
-	~agent()
-	{
-		tile->on_agent_leave(*this);
-	};
+	~agent();
 
 private:
 	/* Just for initial placement. */
