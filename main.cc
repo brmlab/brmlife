@@ -43,8 +43,12 @@ main(int argc, char *argv[])
 
 	std::list<class agent *> agents;
 
+	/* Main tick loop. */
+
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
+
+		/* Accept new agents. */
 
 		int cfd = accept(lfd, NULL, NULL);
 		if (cfd >= 0) {
@@ -55,6 +59,8 @@ main(int argc, char *argv[])
 			} while (agentpos->agent);
 			agents.push_back(new class agent(0, *agentpos, conn));
 		}
+
+		/* Run on_tick everywhere. */
 
 		map.on_tick();
 
@@ -69,6 +75,8 @@ next_agent:
 					goto next_agent;
 			}
 		}
+
+		/* Finish a tick. */
 
 		map.print_map();
 		std::cout << '\n';
