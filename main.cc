@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
 #include "agent.h"
@@ -8,7 +10,9 @@ main(int argc, char *argv[])
 {
 	class map map(10, 10);
 
-	class tile &agentpos = map.tile_at(4, 4);
+	srandom(time(NULL));
+
+	class tile &agentpos = map.tile_at(random() % map.w, random() % map.h);
 	class agent agent(0, agentpos);
 
 	map.print_map();
