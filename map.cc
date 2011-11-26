@@ -1,5 +1,6 @@
-#include <iostream>
 #include <cassert>
+#include <cstdlib>
+#include <iostream>
 
 #include "agent.h"
 #include "map.h"
@@ -46,6 +47,17 @@ tile::tile_in_dir(int dir_x, int dir_y)
 	return map.tile_at(x2, y2);
 }
 
+
+class tile &
+map::agent_startpos(void)
+{
+	/* Find a random starting tile that is not occupied yet. */
+	class tile *tile;
+	do {
+		tile = &tile_at(random() % w, random() % h);
+	} while (tile->agent);
+	return *tile;
+}
 
 void
 map::on_tick(void)

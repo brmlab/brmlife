@@ -66,11 +66,7 @@ next_agent:
 		int cfd = accept(lfd, NULL, NULL);
 		if (cfd >= 0) {
 			class connection *conn = new class connection(cfd);
-			class tile *agentpos;
-			do {
-				agentpos = &map.tile_at(random() % map.w, random() % map.h);
-			} while (agentpos->agent);
-			agents.push_back(new class agent(agents.size(), *agentpos, conn));
+			agents.push_back(new class agent(agents.size(), map.agent_startpos(), conn));
 		}
 
 		/* Run on_tick everywhere. */

@@ -55,6 +55,8 @@ public:
 		return *tiles[y * w + x];
 	};
 
+	class tile &agent_startpos(void);
+
 	void on_tick(void);
 
 	void print_map(void);
