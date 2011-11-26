@@ -42,8 +42,6 @@ main(int argc, char *argv[])
 	class agent *agent = NULL;
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
-		map.print_map();
-		std::cout << '\n';
 
 		if (agent) {
 			agent->on_tick();
@@ -61,6 +59,8 @@ main(int argc, char *argv[])
 			}
 		}
 
+		map.print_map();
+		std::cout << '\n';
 		usleep(1000000);
 		tick_id++;
 	}
