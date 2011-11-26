@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstring>
 
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -23,7 +24,6 @@ main(int argc, char *argv[])
 
 	srandom(time(NULL));
 
-	signal(SIGPIPE, SIG_IGN);
 	int lfd = socket(AF_INET, SOCK_STREAM, 0);
 	struct sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
@@ -35,22 +35,29 @@ main(int argc, char *argv[])
 	bind(lfd, (struct sockaddr *) &sin, sizeof(sin));
 	listen(lfd, 10);
 
-	int cfd;
-	while ((cfd = accept(lfd, NULL, NULL)) >= 0) {
-		class connection conn(cfd);
-		class tile &agentpos = map.tile_at(random() % map.w, random() % map.h);
-		class agent agent(0, agentpos, conn);
+	signal(SIGPIPE, SIG_IGN);
+	int flags = fcntl(lfd, F_GETFL, 0);
+	fcntl(lfd, F_SETFL, flags | O_NONBLOCK);
 
-		while (true) {
-			std::cout << "tick " << tick_id << '\n';
-			map.print_map();
-			std::cout << '\n';
+	class agent *agent = NULL;
+	while (true) {
+		std::cout << "tick " << tick_id << '\n';
+		map.print_map();
+		std::cout << '\n';
 
-			agent.on_tick();
-
-			usleep(1000000);
-			tick_id++;
+		if (agent) {
+			agent->on_tick();
+		} else {
+			int cfd = accept(lfd, NULL, NULL);
+			if (cfd >= 0) {
+				class connection *conn = new class connection(cfd);
+				class tile &agentpos = map.tile_at(random() % map.w, random() % map.h);
+				agent = new class agent(0, agentpos, *conn);
+			}
 		}
+
+		usleep(1000000);
+		tick_id++;
 	}
 
 	return 0;
