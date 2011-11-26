@@ -31,6 +31,9 @@ agent::move_dir(int dir_x, int dir_y)
 void
 agent::on_tick(void)
 {
+	if (!conn)
+		return;
+
 	char around[4] = {
 		tile->tile_in_dir(0, -1).symbol(),
 		tile->tile_in_dir(1, 0).symbol(),
@@ -43,5 +46,6 @@ agent::on_tick(void)
 agent::~agent()
 {
 	tile->on_agent_leave(*this);
-	delete conn;
+	if (conn)
+		delete conn;
 };
