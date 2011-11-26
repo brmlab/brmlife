@@ -70,7 +70,7 @@ next_agent:
 			do {
 				agentpos = &map.tile_at(random() % map.w, random() % map.h);
 			} while (agentpos->agent);
-			agents.push_back(new class agent(0, *agentpos, conn));
+			agents.push_back(new class agent(agents.size(), *agentpos, conn));
 		}
 
 		/* Run on_tick everywhere. */
