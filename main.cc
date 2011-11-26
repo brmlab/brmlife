@@ -1,7 +1,9 @@
 #include <cstdlib>
+#include <cstdio>
 #include <ctime>
-#include <iostream>
 #include <cstring>
+#include <iostream>
+#include <list>
 
 #include <fcntl.h>
 #include <netinet/in.h>
@@ -39,26 +41,33 @@ main(int argc, char *argv[])
 	int flags = fcntl(lfd, F_GETFL, 0);
 	fcntl(lfd, F_SETFL, flags | O_NONBLOCK);
 
-	class agent *agent = NULL;
+	std::list<class agent *> agents;
+
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
 
 		map.on_tick();
 
-		if (agent) {
-			agent->on_tick();
-			if (agent->conn && agent->conn->error) {
-				delete agent;
-				agent = NULL;
+		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
+		{
+next_agent:
+			(*agent)->on_tick();
+			if ((*agent)->conn && (*agent)->conn->error) {
+				delete *agent;
+				agent = agents.erase(agent);
+				if (agent != agents.end())
+					goto next_agent;
 			}
+		}
 
-		} else {
-			int cfd = accept(lfd, NULL, NULL);
-			if (cfd >= 0) {
-				class connection *conn = new class connection(cfd);
-				class tile &agentpos = map.tile_at(random() % map.w, random() % map.h);
-				agent = new class agent(0, agentpos, conn);
-			}
+		int cfd = accept(lfd, NULL, NULL);
+		if (cfd >= 0) {
+			class connection *conn = new class connection(cfd);
+			class tile *agentpos;
+			do {
+				agentpos = &map.tile_at(random() % map.w, random() % map.h);
+			} while (agentpos->agent);
+			agents.push_back(new class agent(0, *agentpos, conn));
 		}
 
 		map.print_map();
