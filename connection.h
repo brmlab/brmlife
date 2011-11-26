@@ -11,7 +11,7 @@ public:
 
 	connection(int fd_) : fd(fd_) {}
 
-	void senses(char around[4]);
+	void senses(int tick_id, char around[4]);
 };
 
 #endif

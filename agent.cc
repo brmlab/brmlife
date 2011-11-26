@@ -4,6 +4,7 @@
 
 #include "agent.h"
 #include "connection.h"
+#include "main.h"
 #include "map.h"
 
 void
@@ -36,5 +37,5 @@ agent::on_tick(void)
 		tile->tile_in_dir(0, 1).symbol(),
 		tile->tile_in_dir(-1, 0).symbol(),
 	};
-	conn.senses(around);
+	conn.senses(tick_id, around);
 }

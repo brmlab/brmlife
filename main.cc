@@ -10,7 +10,10 @@
 
 #include "agent.h"
 #include "connection.h"
+#include "main.h"
 #include "map.h"
+
+int tick_id = 0;
 
 int
 main(int argc, char *argv[])
@@ -37,12 +40,14 @@ main(int argc, char *argv[])
 		class agent agent(0, agentpos, conn);
 
 		while (true) {
+			std::cout << "tick " << tick_id << '\n';
 			map.print_map();
 			std::cout << '\n';
 
 			agent.on_tick();
 
 			usleep(1000000);
+			tick_id++;
 		}
 
 		/* TODO: destroy agent cleanly */
