@@ -2,7 +2,7 @@ CFLAGS=-Wall -O3 -g
 
 OBJS=main.o map.o agent.o
 
-brmlife: main.o map.o agent.o
+brmlife: $(OBJS)
 	$(CXX) -o $@ $^
 
 
