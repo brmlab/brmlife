@@ -31,6 +31,11 @@ agent::move_dir(int dir_x, int dir_y)
 void
 agent::on_tick(void)
 {
+}
+
+void
+agent::on_senses_update(void)
+{
 	if (!conn)
 		return;
 

@@ -79,6 +79,11 @@ next_agent:
 		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
 			(*agent)->on_tick();
 
+		/* Update agents' senses. */
+
+		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
+			(*agent)->on_senses_update();
+
 		/* Finish a tick. */
 
 		map.print_map();
