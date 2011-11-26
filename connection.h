@@ -1,7 +1,7 @@
 #ifndef BRMLIFE__CONNECTION_H
 #define BRMLIFE__CONNECTION_H
 
-#include <cstdio>
+#include <unistd.h>
 
 #include "map.h"
 
@@ -10,6 +10,11 @@ public:
 	int fd;
 
 	connection(int fd_) : fd(fd_) {}
+
+	~connection()
+	{
+		close(fd);
+	}
 
 	void senses(int tick_id, char around[4]);
 };

@@ -1,7 +1,8 @@
 #include <cassert>
-#include <cstdlib>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <unistd.h>
 
 #include "agent.h"
 #include "connection.h"
