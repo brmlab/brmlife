@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 
+#include "agent.h"
 #include "map.h"
 
 void
@@ -22,7 +23,15 @@ tile::on_tick(void)
 }
 
 char
-tile_ground::symbol(void)
+tile::symbol(void)
+{
+	if (agent)
+		return '0' + (agent->id % 10);
+	return type_symbol();
+}
+
+char
+tile_ground::type_symbol(void)
 {
 	return '.';
 }

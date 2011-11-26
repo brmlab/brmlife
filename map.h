@@ -13,11 +13,12 @@ public:
 
 	virtual void on_tick(void);
 
-	virtual char symbol(void) = 0;
+	char symbol(void);
+	virtual char type_symbol(void) = 0;
 };
 
 class tile_ground : public tile {
-	char symbol(void);
+	char type_symbol(void);
 };
 
 class position {
