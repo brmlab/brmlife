@@ -46,6 +46,16 @@ main(int argc, char *argv[])
 	while (true) {
 		std::cout << "tick " << tick_id << '\n';
 
+		int cfd = accept(lfd, NULL, NULL);
+		if (cfd >= 0) {
+			class connection *conn = new class connection(cfd);
+			class tile *agentpos;
+			do {
+				agentpos = &map.tile_at(random() % map.w, random() % map.h);
+			} while (agentpos->agent);
+			agents.push_back(new class agent(0, *agentpos, conn));
+		}
+
 		map.on_tick();
 
 		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
@@ -58,16 +68,6 @@ next_agent:
 				if (agent != agents.end())
 					goto next_agent;
 			}
-		}
-
-		int cfd = accept(lfd, NULL, NULL);
-		if (cfd >= 0) {
-			class connection *conn = new class connection(cfd);
-			class tile *agentpos;
-			do {
-				agentpos = &map.tile_at(random() % map.w, random() % map.h);
-			} while (agentpos->agent);
-			agents.push_back(new class agent(0, *agentpos, conn));
 		}
 
 		map.print_map();
