@@ -26,11 +26,11 @@ public:
 	int x, y;
 	class map *map;
 
-	position(int x_, int y_, class map *map_)
+	position(int x_, int y_, class map &map_)
 	{
 		x = x_;
 		y = y_;
-		map = map_;
+		map = &map_;
 	};
 
 	class position *next_in(int dir_x, int dir_y);
