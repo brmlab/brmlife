@@ -4,10 +4,12 @@
 #include "agent.h"
 #include "map.h"
 
-void
+bool
 tile::on_agent_enter(class agent *a)
 {
+	if (agent) return false;
 	agent = a;
+	return true;
 }
 
 void

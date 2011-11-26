@@ -8,7 +8,7 @@ class tile {
 public:
 	class agent *agent;
 
-	virtual void on_agent_enter(class agent *);
+	virtual bool on_agent_enter(class agent *);
 	virtual void on_agent_leave(class agent *);
 
 	virtual void on_tick(void);
