@@ -1,4 +1,4 @@
-CFLAGS=-Wall -O3 -g
+CFLAGS=-Wall -g
 
 OBJS=main.o map.o agent.o connection.o
 
