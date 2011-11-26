@@ -11,7 +11,8 @@ public:
 
 	class agent *agent;
 
-	tile(int x_, int y_, class map &map_) : x(x_), y(y_), map(map_), agent(NULL) {};
+	tile(int x_, int y_, class map &map_)
+	: x(x_), y(y_), map(map_), agent(NULL) {};
 
 	char symbol(void);
 	virtual char type_symbol(void) = 0;
@@ -26,7 +27,8 @@ public:
 
 class tile_ground : public tile {
 public:
-	tile_ground(int x_, int y_, struct map &map_) : tile(x_, y_, map_) {};
+	tile_ground(int x_, int y_, struct map &map_)
+	: tile(x_, y_, map_) {};
 private:
 	char type_symbol(void);
 };
@@ -36,7 +38,8 @@ public:
 	class tile **tiles;
 	int w, h;
 
-	map(int w_, int h_) : w(w_), h(h_)
+	map(int w_, int h_)
+	: w(w_), h(h_)
 	{
 		tiles = new class tile * [w * h];
 

@@ -11,7 +11,8 @@ public:
 	class tile *tile;
 	class connection *conn;
 
-	agent(int id_, class tile &tile_, class connection *conn_) : id (id_), tile (&tile_), conn (conn_)
+	agent(int id_, class tile &tile_, class connection *conn_)
+	: id (id_), tile (&tile_), conn (conn_)
 	{
 		put_at(tile_);
 	};
