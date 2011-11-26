@@ -1,8 +1,8 @@
 CFLAGS=-Wall -O3 -g
 
-OBJS=main.o map.o
+OBJS=main.o map.o agent.o
 
-brmlife: main.o map.o
+brmlife: main.o map.o agent.o
 	$(CXX) -o $@ $^
 
 
