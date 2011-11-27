@@ -34,6 +34,7 @@ void
 agent::die(void)
 {
 	dead = true;
+	energy = world::dead_body_energy;
 }
 
 void
@@ -50,9 +51,13 @@ agent::on_tick(void)
 {
 	if (!dead) {
 		energy += world::sun_energy;
-
 		if (energy <= 0)
 			die();
+
+	} else {
+		energy += world::dead_decay;
+		if (energy < 0)
+			energy = 0;
 	}
 }
 
