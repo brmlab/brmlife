@@ -19,6 +19,9 @@ agent::put_at(class tile &t)
 bool
 agent::move_dir(int dir_x, int dir_y)
 {
+	if (dead)
+		return false;
+
 	energy -= world::move_cost;
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
@@ -33,6 +36,7 @@ agent::move_dir(int dir_x, int dir_y)
 void
 agent::die(void)
 {
+	assert(!dead);
 	dead = true;
 	energy = world::dead_body_energy;
 }
