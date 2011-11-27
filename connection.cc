@@ -70,10 +70,20 @@ connection::actions(class agent &agent)
 		line.erase(0, spofs + 1);
 
 		if (negotiation && !cmd.compare("move")) {
-			double mprob = 1.0;
-			sscanf(line.c_str(), "%lf", &mprob);
-			if (mprob >= 0 && mprob <= 1)
-				agent.attr.move = mprob;
+			double rate = agent.attr.move;
+			sscanf(line.c_str(), "%lf", &rate);
+			if (rate >= 0 && rate <= 1)
+				agent.attr.move = rate;
+		} else if (negotiation && !cmd.compare("attack")) {
+			double rate = agent.attr.attack;
+			sscanf(line.c_str(), "%lf", &rate);
+			if (rate >= 0 && rate <= 1)
+				agent.attr.attack = rate;
+		} else if (negotiation && !cmd.compare("defense")) {
+			double rate = agent.attr.defense;
+			sscanf(line.c_str(), "%lf", &rate);
+			if (rate >= 0 && rate <= 1)
+				agent.attr.defense = rate;
 
 		} else if (!negotiation && !cmd.compare("move_dir")) {
 			int x = 0, y = 0;
@@ -82,7 +92,6 @@ connection::actions(class agent &agent)
 			if (y < -1) y = -1; if (y > 1) y = 1;
 			if (!agent.move_dir(x, y))
 				bump();
-
 		} else if (!negotiation && !cmd.compare("attack_dir")) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);

@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 
 #include "agent.h"
@@ -71,8 +72,8 @@ agent::attack_dir(int dir_x, int dir_y)
 	if (dead || a->dead)
 		return true;
 
-	int dice = rand() % (energy + a->energy);
-	if (dice < energy) {
+	int dice = random() % ((int) round(attr.attack * energy) + (int) round(a->attr.defense * a->energy));
+	if (dice < attr.attack * energy) {
 		a->die();
 	} else {
 		die();
@@ -115,6 +116,8 @@ agent::on_tick(void)
 	if (!dead) {
 		chenergy(world::sun_energy);
 		chenergy(attr.move * world::move_idle_cost);
+		chenergy(attr.attack * world::attack_idle_cost);
+		chenergy(attr.defense * world::defense_idle_cost);
 
 	} else {
 		energy += world::dead_decay;

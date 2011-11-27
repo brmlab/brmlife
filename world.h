@@ -8,6 +8,8 @@ struct world {
 	const static int defense_cost = -200;
 
 	const static int move_idle_cost = -15; /* ... * attr.move */
+	const static int attack_idle_cost = -15; /* ... * attr.attack */
+	const static int defense_idle_cost = -15; /* ... * attr.defense */
 	const static int sun_energy = 10;
 
 	const static int dead_body_energy = 2000;

@@ -54,5 +54,11 @@ by empty line), but with these commands instead:
 
 	move <rate>
 		<rate> between 0 and 1, describing probability
-		of success of move command. Higher probability
-		means higher energy maintenance of move actuators.
+		of success of move command.
+	attack <rate>
+		<rate> between 0 and 1.
+	defense <rate>
+		<rate> between 0 and 1.
+
+In general, higher rate means higher energy maintenance of the
+appropriate actuators.

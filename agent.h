@@ -16,6 +16,8 @@ public:
 
 	struct {
 		double move;
+		double attack;
+		double defense;
 	} attr;
 
 	int energy;
@@ -27,6 +29,8 @@ public:
 		energy = world::newborn_energy;
 		dead = false;
 		attr.move = 1.0;
+		attr.attack = 0.5;
+		attr.defense = 0.5;
 	};
 	void spawn(void);
 	void spawn_at(class tile &tile);
