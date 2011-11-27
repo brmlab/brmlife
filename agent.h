@@ -11,17 +11,19 @@ public:
 	int id;
 	class connection *conn;
 
+	class map &map;
 	class tile *tile;
 
 	int energy;
 	bool dead;
 
-	agent(int id_, class connection *conn_)
-	: id (id_), conn (conn_)
+	agent(int id_, class connection *conn_, class map &map_)
+	: id (id_), conn (conn_), map (map_)
 	{
 		energy = world::newborn_energy;
 		dead = false;
 	};
+	void spawn(void);
 	void spawn_at(class tile &tile);
 
 	bool move_dir(int dir_x, int dir_y);

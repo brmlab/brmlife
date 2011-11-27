@@ -8,6 +8,12 @@
 #include "map.h"
 
 void
+agent::spawn(void)
+{
+	spawn_at(map.agent_startpos());
+}
+
+void
 agent::spawn_at(class tile &t)
 {
 	tile = &t;
