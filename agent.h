@@ -14,6 +14,10 @@ public:
 	class map &map;
 	class tile *tile;
 
+	struct {
+		double move;
+	} attr;
+
 	int energy;
 	bool dead;
 
@@ -22,6 +26,7 @@ public:
 	{
 		energy = world::newborn_energy;
 		dead = false;
+		attr.move = 1.0;
 	};
 	void spawn(void);
 	void spawn_at(class tile &tile);

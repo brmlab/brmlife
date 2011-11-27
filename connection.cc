@@ -69,7 +69,13 @@ connection::actions(class agent &agent)
 		std::string cmd = line.substr(0, spofs);
 		line.erase(0, spofs + 1);
 
-		if (!cmd.compare("move_dir")) {
+		if (negotiation && !cmd.compare("move")) {
+			double mprob = 1.0;
+			sscanf(line.c_str(), "%lf", &mprob);
+			if (mprob >= 0 && mprob <= 1)
+				agent.attr.move = mprob;
+
+		} else if (!negotiation && !cmd.compare("move_dir")) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;

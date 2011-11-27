@@ -46,3 +46,13 @@ The following outputs are supported:
 	attack_dir <x> <y>
 		<x> and <y> are integer offsets relative
 		to the current position; may be just {-1,0,1}
+
+
+After connecting, the client specifies its desired attributes,
+in the same format as in normal output (line-based, terminated
+by empty line), but with these commands instead:
+
+	move <rate>
+		<rate> between 0 and 1, describing probability
+		of success of move command. Higher probability
+		means higher energy maintenance of move actuators.

@@ -29,6 +29,9 @@ agent::move_dir(int dir_x, int dir_y)
 	if (dead || !tile)
 		return false;
 
+	if ((double) random() / (double) RAND_MAX > attr.move)
+		return false;
+
 	chenergy(world::move_cost);
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
