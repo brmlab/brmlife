@@ -24,13 +24,13 @@ public:
 	bool dead;
 
 	agent(int id_, class connection *conn_, class map &map_)
-	: id (id_), conn (conn_), map (map_)
+	: id (id_), conn (conn_), map (map_), tile (NULL)
 	{
-		energy = world::newborn_energy;
-		dead = false;
 		attr.move = 1.0;
 		attr.attack = 0.5;
 		attr.defense = 0.5;
+		energy = world::newborn_energy;
+		dead = false;
 	};
 	void spawn(void);
 	void spawn_at(class tile &tile);
@@ -53,10 +53,10 @@ public:
 	herb(int id_, class map &map_)
 	: agent(id_, NULL, map_)
 	{
-		energy = world::herb_energy;
 		attr.move = 0;
 		attr.attack = 0;
 		attr.defense = 0;
+		energy = world::herb_energy;
 	}
 
 	void on_tick(void);
