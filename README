@@ -1,0 +1,32 @@
+Artificial Life Platform
+========================
+
+Client-server protocol: The time is quantized in ticks.
+In each tick, the server sends sensor input to the agent.
+Until the next tick, the client may supply actions to take
+to the server.
+
+Both server input and client output follow the same format:
+
+	cmd1 <par1> <par2>...
+	cmd2 <par1> <par2>...
+	...
+	<empty line>
+
+I.e. a sequence of lines terminated by an empty line.
+Each line starts with a single word (command name), plus
+some command-specific parameters. Note that newlines are
+CRLF ("\r\n"), not just LF ("\n")!
+
+The following inputs are supported:
+
+	tick <ticknum>
+	around <chars>
+		<chars> describe tiles, clockwise from top,
+		in the immediate vicinity of the agent
+
+The following outputs are supported:
+
+	move_dir <x> <y>
+		<x> and <y> are integer offsets relative
+		to the current position
