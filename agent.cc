@@ -37,11 +37,15 @@ agent::move_dir(int dir_x, int dir_y)
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
 	if (t2->agent) {
-		if (t2->agent->dead) {
+		if (t2->herb_here()) {
 			class agent *a = t2->agent;
 			t2->on_agent_leave(*a);
-			/* Nom. */
-			chenergy(a->energy);
+			chenergy(a->energy); /* Nom. */
+			a->die();
+		} else if (t2->agent->dead) {
+			class agent *a = t2->agent;
+			t2->on_agent_leave(*a);
+			chenergy(a->energy); /* Nom. */
 			a->energy = 0;
 		} else {
 			return false;
@@ -137,7 +141,7 @@ agent::on_senses_update(void)
 
 agent::~agent()
 {
-	if (tile)
+	if (tile && tile->agent == this)
 		tile->on_agent_leave(*this);
 	if (conn) {
 		conn->cancel();
