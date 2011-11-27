@@ -94,14 +94,16 @@ connection::thread_loop(void)
 		buf = out_buf;
 		pthread_mutex_unlock(&buf_lock);
 
-		len = write(fd, buf.c_str(), buf.size());
-		if (len < 0) {
-			pthread_mutex_lock(&cancel_lock);
-			error = true;
-		} else {
-			pthread_mutex_lock(&buf_lock);
-			out_buf.erase(0, len);
-			pthread_mutex_unlock(&buf_lock);
+		if (buf.size() > 0) {
+			len = write(fd, buf.c_str(), buf.size());
+			if (len < 0) {
+				pthread_mutex_lock(&cancel_lock);
+				error = true;
+			} else {
+				pthread_mutex_lock(&buf_lock);
+				out_buf.erase(0, len);
+				pthread_mutex_unlock(&buf_lock);
+			}
 		}
 
 		struct timeval tv;
