@@ -19,6 +19,8 @@ agent::put_at(class tile &t)
 bool
 agent::move_dir(int dir_x, int dir_y)
 {
+	energy -= world::move_cost;
+
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
 	if (!t2->on_agent_enter(*this))
 		return false;
@@ -54,7 +56,7 @@ agent::on_senses_update(void)
 		tile->tile_in_dir(0, 1).symbol(),
 		tile->tile_in_dir(-1, 0).symbol(),
 	};
-	conn->senses(tick_id, around);
+	conn->senses(tick_id, energy, around);
 }
 
 agent::~agent()

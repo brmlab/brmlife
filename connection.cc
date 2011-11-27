@@ -11,10 +11,10 @@
 #include "connection.h"
 
 void
-connection::senses(int tick_id, char around[4])
+connection::senses(int tick_id, int energy, char around[4])
 {
 	char buf[1024];
-	snprintf(buf, sizeof(buf), "tick %d\naround %c%c%c%c\n\n", tick_id, around[0], around[1], around[2], around[3]);
+	snprintf(buf, sizeof(buf), "tick %d\nenergy %d\naround %c%c%c%c\n\n", tick_id, energy, around[0], around[1], around[2], around[3]);
 
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
