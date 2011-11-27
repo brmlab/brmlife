@@ -29,8 +29,11 @@ tile::on_tick(void)
 char
 tile::symbol(void)
 {
-	if (agent)
+	if (agent) {
+		if (agent->dead)
+			return 'a';
 		return '0' + (agent->id % 10);
+	}
 	return type_symbol();
 }
 
