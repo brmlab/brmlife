@@ -31,6 +31,12 @@ agent::move_dir(int dir_x, int dir_y)
 }
 
 void
+agent::die(void)
+{
+	dead = true;
+}
+
+void
 agent::on_action_takes(void)
 {
 	if (!conn)
@@ -42,7 +48,12 @@ agent::on_action_takes(void)
 void
 agent::on_tick(void)
 {
-	energy += world::sun_energy;
+	if (!dead) {
+		energy += world::sun_energy;
+
+		if (energy <= 0)
+			die();
+	}
 }
 
 void
@@ -57,7 +68,7 @@ agent::on_senses_update(void)
 		tile->tile_in_dir(0, 1).symbol(),
 		tile->tile_in_dir(-1, 0).symbol(),
 	};
-	conn->senses(tick_id, energy, around);
+	conn->senses(tick_id, dead, energy, around);
 }
 
 agent::~agent()

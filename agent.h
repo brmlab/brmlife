@@ -14,15 +14,19 @@ public:
 	class tile *tile;
 
 	int energy;
+	bool dead;
 
 	agent(int id_, class tile &tile_, class connection *conn_)
 	: id (id_), conn (conn_), tile (&tile_)
 	{
 		put_at(tile_);
 		energy = world::newborn_energy;
+		dead = false;
 	};
 
 	bool move_dir(int dir_x, int dir_y);
+
+	void die(void);
 
 	void on_action_takes(void);
 	void on_tick(void);
