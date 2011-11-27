@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdlib>
+#include <cstdio>
 #include <iostream>
 
 #include "agent.h"
@@ -37,6 +38,16 @@ char
 tile_ground::type_symbol(void)
 {
 	return '.';
+}
+
+char *
+tile::str(void)
+{
+	snprintf(str_buf, sizeof(str_buf),
+		"%c%c",
+		type_symbol(),
+		agent ? (!agent->dead ? 'A' : 'a') : '-');
+	return str_buf;
 }
 
 class tile &

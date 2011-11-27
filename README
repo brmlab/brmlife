@@ -28,9 +28,14 @@ The following inputs (in no particular order) are supported:
 	energy <points>
 		number of agent's energy points; disregard
 		in case of dead agents
-	around <chars>
-		<chars> describe tiles, clockwise from top,
+	around <desc> <desc>...
+		<desc> describe tiles, clockwise from top,
 		in the immediate vicinity of the agent
+		<desc> format is two-character, <type><agent>
+			<type>:  . for ground
+			<agent>: - no agent
+				 a dead agent
+				 A alive agent
 
 The following outputs are supported:
 

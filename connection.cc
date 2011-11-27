@@ -18,19 +18,19 @@ connection::senses(int tick_id, class agent &a)
 		"tick %d\r\n"
 		"%s"
 		"energy %d\r\n"
-		"around %c%c%c%c%c%c%c%c\r\n"
+		"around %s %s %s %s %s %s %s %s\r\n"
 		"\r\n",
 		tick_id,
 		a.dead ? "DEAD\r\n" : "",
 		a.energy,
-		a.tile->tile_in_dir(0, -1).symbol(),
-		a.tile->tile_in_dir(1, -1).symbol(),
-		a.tile->tile_in_dir(1, 0).symbol(),
-		a.tile->tile_in_dir(1, 1).symbol(),
-		a.tile->tile_in_dir(0, 1).symbol(),
-		a.tile->tile_in_dir(-1, 1).symbol(),
-		a.tile->tile_in_dir(-1, 0).symbol(),
-		a.tile->tile_in_dir(-1, -1).symbol()
+		a.tile->tile_in_dir(0, -1).str(),
+		a.tile->tile_in_dir(1, -1).str(),
+		a.tile->tile_in_dir(1, 0).str(),
+		a.tile->tile_in_dir(1, 1).str(),
+		a.tile->tile_in_dir(0, 1).str(),
+		a.tile->tile_in_dir(-1, 1).str(),
+		a.tile->tile_in_dir(-1, 0).str(),
+		a.tile->tile_in_dir(-1, -1).str()
 	);
 
 	pthread_mutex_lock(&buf_lock);

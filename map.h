@@ -16,6 +16,7 @@ public:
 
 	char symbol(void);
 	virtual char type_symbol(void) = 0;
+	char *str(void);
 
 	class tile &tile_in_dir(int dir_x, int dir_y);
 
@@ -23,6 +24,9 @@ public:
 	virtual void on_agent_leave(class agent &);
 
 	virtual void on_tick(void);
+
+private:
+	char str_buf[3];
 };
 
 class tile_ground : public tile {
