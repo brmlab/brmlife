@@ -37,6 +37,7 @@ The following inputs (in no particular order) are supported:
 			<agent>: - no agent
 				 a dead agent
 				 A alive agent
+				 x herp
 
 The following outputs are supported:
 
