@@ -42,7 +42,7 @@ public:
 	void die(void);
 
 	void on_action_takes(void);
-	void on_tick(void);
+	virtual void on_tick(void);
 	void on_senses_update(void);
 
 	~agent();
@@ -58,6 +58,8 @@ public:
 		attr.attack = 0;
 		attr.defense = 0;
 	}
+
+	void on_tick(void);
 };
 
 #endif

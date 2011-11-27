@@ -19,6 +19,7 @@ public:
 	char *str(void);
 
 	class tile &tile_in_dir(int dir_x, int dir_y);
+	bool herb_here(void);
 
 	virtual bool on_agent_enter(class agent &);
 	virtual void on_agent_leave(class agent &);

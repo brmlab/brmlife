@@ -143,4 +143,30 @@ agent::~agent()
 		conn->cancel();
 		conn = NULL;
 	}
-};
+}
+
+
+static void
+spawn_herb(class tile &t)
+{
+	if (t.agent)
+		return;
+	class herb *h = new class herb(agent_id++, t.map);
+	agents.push_back(h);
+	h->spawn_at(t);
+}
+
+void
+herb::on_tick(void)
+{
+	agent::on_tick();
+
+	assert(tile);
+	if (energy > 4 * world::herb_energy) {
+		spawn_herb(tile->tile_in_dir(1, 0));
+		spawn_herb(tile->tile_in_dir(0, 1));
+		spawn_herb(tile->tile_in_dir(-1, 0));
+		spawn_herb(tile->tile_in_dir(0, -1));
+		die();
+	}
+}

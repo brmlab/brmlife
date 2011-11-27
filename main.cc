@@ -19,6 +19,24 @@
 
 int tick_id = 0;
 
+int agent_id = 0;
+std::list<class agent *> agents;
+
+static void
+drop_agents(void)
+{
+	for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
+	{
+next_agent:
+		if (((*agent)->conn && (*agent)->conn->error) || (*agent)->dead) {
+			delete *agent;
+			agent = agents.erase(agent);
+			if (agent != agents.end())
+				goto next_agent;
+		}
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -42,13 +60,10 @@ main(int argc, char *argv[])
 	int flags = fcntl(lfd, F_GETFL, 0);
 	fcntl(lfd, F_SETFL, flags | O_NONBLOCK);
 
-	std::list<class agent *> agents;
-	int aid = 0;
-
 	/* Spawn herbs. */
 
 	for (int i = 0; i < herbs; i++) {
-		class agent *a = new class herb(aid++, map);
+		class agent *a = new class herb(agent_id++, map);
 		agents.push_back(a);
 		a->spawn();
 	}
@@ -60,23 +75,14 @@ main(int argc, char *argv[])
 
 		/* Drop disconnected agents. */
 
-		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
-		{
-next_agent:
-			if ((*agent)->conn && (*agent)->conn->error) {
-				delete *agent;
-				agent = agents.erase(agent);
-				if (agent != agents.end())
-					goto next_agent;
-			}
-		}
+		drop_agents();
 
 		/* Accept new agents. */
 
 		int cfd = accept(lfd, NULL, NULL);
 		if (cfd >= 0) {
 			class connection *conn = new class connection(cfd);
-			class agent *a = new class agent(aid++, conn, map);
+			class agent *a = new class agent(agent_id++, conn, map);
 			agents.push_back(a);
 		}
 
@@ -90,6 +96,7 @@ next_agent:
 		map.on_tick();
 		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
 			(*agent)->on_tick();
+		drop_agents(); /* Some agents might have died. */
 
 		/* Update agents' senses. */
 

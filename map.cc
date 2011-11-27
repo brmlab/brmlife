@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "agent.h"
+#include "main.h"
 #include "map.h"
 
 bool
@@ -24,6 +25,26 @@ tile::on_agent_leave(class agent &a)
 void
 tile::on_tick(void)
 {
+	int herbs = 0;
+	herbs += tile_in_dir(1, 0).herb_here();
+	herbs += tile_in_dir(0, 1).herb_here();
+	herbs += tile_in_dir(-1, 0).herb_here();
+	herbs += tile_in_dir(0, -1).herb_here();
+	herbs += herb_here();
+
+	if (herbs) {
+		if (herb_here()) { agent->chenergy(world::soil_energy / herbs); }
+		if (tile_in_dir(1, 0).herb_here()) { tile_in_dir(1, 0).agent->chenergy(world::soil_energy / herbs); }
+		if (tile_in_dir(0, 1).herb_here()) { tile_in_dir(0, 1).agent->chenergy(world::soil_energy / herbs); }
+		if (tile_in_dir(-1, 0).herb_here()) { tile_in_dir(-1, 0).agent->chenergy(world::soil_energy / herbs); }
+		if (tile_in_dir(0, -1).herb_here()) { tile_in_dir(0, -1).agent->chenergy(world::soil_energy / herbs); }
+	}
+}
+
+bool
+tile::herb_here(void)
+{
+	return agent && (dynamic_cast<herb *> (agent)) != NULL;
 }
 
 char
