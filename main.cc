@@ -22,7 +22,7 @@ int tick_id = 0;
 int
 main(int argc, char *argv[])
 {
-	class map map(40, 20);
+	class map map(argc < 2 ? 40 : atoi(argv[1]), argc < 3 ? 20 : atoi(argv[2]));
 
 	srandom(time(NULL));
 
