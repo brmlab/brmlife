@@ -22,7 +22,7 @@ agent::move_dir(int dir_x, int dir_y)
 	if (dead)
 		return false;
 
-	energy -= world::move_cost;
+	chenergy(world::move_cost);
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
 	if (t2->agent) {
@@ -30,7 +30,7 @@ agent::move_dir(int dir_x, int dir_y)
 			class agent *a = t2->agent;
 			t2->on_agent_leave(*a);
 			/* Nom. */
-			energy += a->energy;
+			chenergy(a->energy);
 			a->energy = 0;
 		} else {
 			return false;
@@ -43,6 +43,14 @@ agent::move_dir(int dir_x, int dir_y)
 	tile->on_agent_leave(*this);
 	tile = t2;
 	return true;
+}
+
+void
+agent::chenergy(int delta)
+{
+	energy += delta;
+	if (energy <= 0)
+		die();
 }
 
 void
@@ -66,9 +74,7 @@ void
 agent::on_tick(void)
 {
 	if (!dead) {
-		energy += world::sun_energy;
-		if (energy <= 0)
-			die();
+		chenergy(world::sun_energy);
 
 	} else {
 		energy += world::dead_decay;

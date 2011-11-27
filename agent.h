@@ -26,6 +26,7 @@ public:
 
 	bool move_dir(int dir_x, int dir_y);
 
+	void chenergy(int delta);
 	void die(void);
 
 	void on_action_takes(void);
