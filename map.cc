@@ -72,7 +72,7 @@ tile::str(void)
 	snprintf(str_buf, sizeof(str_buf),
 		"%c%c",
 		type_symbol(),
-		agent ? (!agent->dead ? 'A' : 'a') : '-');
+		agent ? (!agent->dead ? (herb_here() ? 'x' : 'A') : 'a') : '-');
 	return str_buf;
 }
 
