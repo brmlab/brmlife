@@ -42,6 +42,7 @@ agent::on_action_takes(void)
 void
 agent::on_tick(void)
 {
+	energy += world::sun_energy;
 }
 
 void
