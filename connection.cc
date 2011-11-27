@@ -18,7 +18,7 @@ connection::senses(int tick_id, class agent &a)
 		"tick %d\r\n"
 		"%s"
 		"energy %d\r\n"
-		"around %s %s %s %s %s %s %s %s\r\n"
+		"visual %s %s %s %s %s %s %s %s\r\n"
 		"\r\n",
 		tick_id,
 		a.dead ? "DEAD\r\n" : "",

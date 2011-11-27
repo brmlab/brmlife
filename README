@@ -28,7 +28,7 @@ The following inputs (in no particular order) are supported:
 	energy <points>
 		number of agent's energy points; disregard
 		in case of dead agents
-	around <desc> <desc>...
+	visual <desc> <desc>...
 		<desc> describe tiles, clockwise from top,
 		in the immediate vicinity of the agent
 		<desc> format is two-character, <type><agent>
