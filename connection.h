@@ -26,7 +26,7 @@ public:
 		close(fd);
 	}
 
-	void senses(int tick_id, bool dead, int energy, char around[4]);
+	void senses(int tick_id, bool dead, int energy, char around[8]);
 	void actions(class agent *);
 
 	void cancel(void);
