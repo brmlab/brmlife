@@ -14,7 +14,7 @@ void
 connection::senses(int tick_id, bool dead, int energy, char around[4])
 {
 	char buf[1024];
-	snprintf(buf, sizeof(buf), "tick %d\n%senergy %d\naround %.8s\n\n", tick_id, dead ? "DEAD\n" : "", energy, around);
+	snprintf(buf, sizeof(buf), "tick %d\r\n%senergy %d\r\naround %.8s\r\n\r\n", tick_id, dead ? "DEAD\r\n" : "", energy, around);
 
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
@@ -25,7 +25,7 @@ void
 connection::bump(void)
 {
 	pthread_mutex_lock(&buf_lock);
-	out_buf.append("BUMP\n");
+	out_buf.append("BUMP\r\n");
 	pthread_mutex_unlock(&buf_lock);
 }
 
