@@ -61,6 +61,8 @@ connection::actions(class agent &agent)
 	}
 
 	while (in_buf.c_str()[0] != '\r') {
+		int mask = 0;
+
 		int nlofs = in_buf.find("\r\n");
 		std::string line = in_buf.substr(0, nlofs);
 		in_buf.erase(0, nlofs + 2);
@@ -85,20 +87,22 @@ connection::actions(class agent &agent)
 			if (rate >= 0 && rate <= 1)
 				agent.attr.defense = rate;
 
-		} else if (!negotiation && !cmd.compare("move_dir")) {
+		} else if (!negotiation && !cmd.compare("move_dir") && !(mask & 1)) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
 			if (!agent.move_dir(x, y))
 				bump();
-		} else if (!negotiation && !cmd.compare("attack_dir")) {
+			mask |= 1;
+		} else if (!negotiation && !cmd.compare("attack_dir") && !(mask & 2)) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
 			if (!agent.attack_dir(x, y))
 				bump();
+			mask |= 2;
 
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
