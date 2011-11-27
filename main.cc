@@ -69,7 +69,6 @@ next_agent:
 			class connection *conn = new class connection(cfd);
 			class agent *a = new class agent(aid++, conn, map);
 			agents.push_back(a);
-			a->spawn();
 		}
 
 		/* Collect and take actions. */

@@ -13,10 +13,11 @@ class agent;
 class connection {
 public:
 	int fd;
+	bool negotiation;
 	bool error;
 
 	connection(int fd_)
-	: fd(fd_), error(false)
+	: fd(fd_), negotiation(true), error(false)
 	{
 		spawn_thread();
 	}
