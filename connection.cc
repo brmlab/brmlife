@@ -11,10 +11,27 @@
 #include "connection.h"
 
 void
-connection::senses(int tick_id, bool dead, int energy, char around[4])
+connection::senses(int tick_id, class agent &a)
 {
 	char buf[1024];
-	snprintf(buf, sizeof(buf), "tick %d\r\n%senergy %d\r\naround %.8s\r\n\r\n", tick_id, dead ? "DEAD\r\n" : "", energy, around);
+	snprintf(buf, sizeof(buf),
+		"tick %d\r\n"
+		"%s"
+		"energy %d\r\n"
+		"around %c%c%c%c%c%c%c%c\r\n"
+		"\r\n",
+		tick_id,
+		a.dead ? "DEAD\r\n" : "",
+		a.energy,
+		a.tile->tile_in_dir(0, -1).symbol(),
+		a.tile->tile_in_dir(1, -1).symbol(),
+		a.tile->tile_in_dir(1, 0).symbol(),
+		a.tile->tile_in_dir(1, 1).symbol(),
+		a.tile->tile_in_dir(0, 1).symbol(),
+		a.tile->tile_in_dir(-1, 1).symbol(),
+		a.tile->tile_in_dir(-1, 0).symbol(),
+		a.tile->tile_in_dir(-1, -1).symbol()
+	);
 
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);

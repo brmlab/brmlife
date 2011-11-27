@@ -83,17 +83,7 @@ agent::on_senses_update(void)
 	if (!conn)
 		return;
 
-	char around[8] = {
-		tile->tile_in_dir(0, -1).symbol(),
-		tile->tile_in_dir(1, -1).symbol(),
-		tile->tile_in_dir(1, 0).symbol(),
-		tile->tile_in_dir(1, 1).symbol(),
-		tile->tile_in_dir(0, 1).symbol(),
-		tile->tile_in_dir(-1, 1).symbol(),
-		tile->tile_in_dir(-1, 0).symbol(),
-		tile->tile_in_dir(-1, -1).symbol(),
-	};
-	conn->senses(tick_id, dead, energy, around);
+	conn->senses(tick_id, *this);
 }
 
 agent::~agent()
