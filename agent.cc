@@ -114,6 +114,7 @@ agent::on_tick(void)
 
 	if (!dead) {
 		chenergy(world::sun_energy);
+		chenergy(attr.move * world::move_idle_cost);
 
 	} else {
 		energy += world::dead_decay;
