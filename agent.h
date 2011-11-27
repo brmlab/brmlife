@@ -48,4 +48,16 @@ public:
 	~agent();
 };
 
+class herb : public agent {
+public:
+	herb(int id_, class map &map_)
+	: agent(id_, NULL, map_)
+	{
+		energy = world::herb_energy;
+		attr.move = 0;
+		attr.attack = 0;
+		attr.defense = 0;
+	}
+};
+
 #endif

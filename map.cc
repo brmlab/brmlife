@@ -32,6 +32,8 @@ tile::symbol(void)
 	if (agent) {
 		if (agent->dead)
 			return 'a';
+		if (agent->attr.move < 0.01)
+			return 'x';
 		return '0' + (agent->id % 10);
 	}
 	return type_symbol();

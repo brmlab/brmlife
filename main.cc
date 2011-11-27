@@ -23,6 +23,7 @@ int
 main(int argc, char *argv[])
 {
 	class map map(argc < 2 ? 40 : atoi(argv[1]), argc < 3 ? 20 : atoi(argv[2]));
+	int herbs = argc < 4 ? map.w * map.h / world::herb_rate : atoi(argv[3]);
 
 	srandom(time(NULL));
 
@@ -43,6 +44,14 @@ main(int argc, char *argv[])
 
 	std::list<class agent *> agents;
 	int aid = 0;
+
+	/* Spawn herbs. */
+
+	for (int i = 0; i < herbs; i++) {
+		class agent *a = new class herb(aid++, map);
+		agents.push_back(a);
+		a->spawn();
+	}
 
 	/* Main tick loop. */
 
