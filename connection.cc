@@ -10,6 +10,9 @@
 #include "agent.h"
 #include "connection.h"
 
+#define buf_incomplete(buf) \
+	(buf.find("\r\n") == std::string::npos || (buf.find("\r\n") > 0 && buf.find("\r\n\r\n") == std::string::npos))
+
 void
 connection::senses(int tick_id, class agent &a)
 {
@@ -50,7 +53,7 @@ void
 connection::actions(class agent &agent)
 {
 	pthread_mutex_lock(&buf_lock);
-	if (in_buf.find("\r\n\r\n") == std::string::npos) {
+	if (buf_incomplete(in_buf)) {
 		/* Not enough data, needs to wait until next turn, sorry. */
 		pthread_mutex_unlock(&buf_lock);
 		return;
@@ -155,7 +158,7 @@ connection::thread_loop(void)
 				bool want_moar = false;
 				pthread_mutex_lock(&buf_lock);
 				in_buf.append(cbuf, len);
-				want_moar = (in_buf.find("\r\n\r\n") == std::string::npos);
+				want_moar = buf_incomplete(in_buf);
 				pthread_mutex_unlock(&buf_lock);
 				if (!want_moar)
 					break;
