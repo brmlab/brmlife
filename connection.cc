@@ -47,7 +47,7 @@ connection::bump(void)
 }
 
 void
-connection::actions(class agent *agent)
+connection::actions(class agent &agent)
 {
 	pthread_mutex_lock(&buf_lock);
 	if (in_buf.find("\r\n\r\n") == std::string::npos) {
@@ -70,7 +70,7 @@ connection::actions(class agent *agent)
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
-			if (!agent->move_dir(x, y))
+			if (!agent.move_dir(x, y))
 				bump();
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
