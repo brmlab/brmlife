@@ -106,6 +106,9 @@ agent::on_action_takes(void)
 void
 agent::on_tick(void)
 {
+	if (!tile)
+		return;
+
 	if (!dead) {
 		chenergy(world::sun_energy);
 
