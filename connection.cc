@@ -43,6 +43,8 @@ connection::actions(class agent *agent)
 		if (!cmd.compare("move_dir")) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
+			if (x < -1) x = -1; if (x > 1) x = 1;
+			if (y < -1) y = -1; if (y > 1) y = 1;
 			agent->move_dir(x, y);
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
