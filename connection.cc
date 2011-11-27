@@ -44,9 +44,8 @@ connection::senses(int tick_id, class agent &a)
 void
 connection::bump(void)
 {
-	pthread_mutex_lock(&buf_lock);
+	/* Must be called with buf_lock held! */
 	out_buf.append("BUMP\r\n");
-	pthread_mutex_unlock(&buf_lock);
 }
 
 void
