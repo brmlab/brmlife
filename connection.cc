@@ -114,6 +114,8 @@ connection::thread_loop(void)
 			len = read(fd, cbuf, sizeof(cbuf));
 			if (len < 0) {
 				error = true;
+			} else if (len == 0) {
+				break;
 			} else {
 				bool want_moar = false;
 				pthread_mutex_lock(&buf_lock);
