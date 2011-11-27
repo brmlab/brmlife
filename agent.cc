@@ -83,7 +83,8 @@ agent::die(void)
 {
 	assert(!dead);
 	dead = true;
-	energy = world::dead_body_energy;
+	if (energy < 0) energy = 0;
+	energy = energy * world::dead_body_energy_carryover + world::dead_body_energy;
 }
 
 void
