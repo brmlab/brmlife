@@ -51,6 +51,8 @@ agent::on_senses_update(void)
 agent::~agent()
 {
 	tile->on_agent_leave(*this);
-	if (conn)
-		delete conn;
+	if (conn) {
+		conn->cancel();
+		conn = NULL;
+	}
 };

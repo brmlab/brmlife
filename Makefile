@@ -1,9 +1,10 @@
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -pthread
+LDFLAGS=-pthread
 
 OBJS=main.o map.o agent.o connection.o
 
 brmlife: $(OBJS)
-	$(CXX) -o $@ $^
+	$(CXX) $(LDFLAGS) -o $@ $^
 
 
 clean:
