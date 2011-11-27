@@ -29,6 +29,15 @@ agent::move_dir(int dir_x, int dir_y)
 }
 
 void
+agent::on_action_takes(void)
+{
+	if (!conn)
+		return;
+
+	conn->actions(this);
+}
+
+void
 agent::on_tick(void)
 {
 }

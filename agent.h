@@ -19,6 +19,7 @@ public:
 
 	bool move_dir(int dir_x, int dir_y);
 
+	void on_action_takes(void);
 	void on_tick(void);
 	void on_senses_update(void);
 

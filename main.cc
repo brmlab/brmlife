@@ -69,6 +69,11 @@ next_agent:
 			agents.push_back(new class agent(agents.size(), map.agent_startpos(), conn));
 		}
 
+		/* Collect and take actions. */
+
+		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
+			(*agent)->on_action_takes();
+
 		/* Run on_tick everywhere. */
 
 		map.on_tick();

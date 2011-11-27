@@ -8,6 +8,8 @@
 
 #include "map.h"
 
+class agent;
+
 class connection {
 public:
 	int fd;
@@ -25,11 +27,12 @@ public:
 	}
 
 	void senses(int tick_id, char around[4]);
+	void actions(class agent *);
 
 	void cancel(void);
 
 private:
-	std::string out_buf;
+	std::string out_buf, in_buf;
 	pthread_mutex_t buf_lock;
 
 	pthread_cond_t cancel_cond;

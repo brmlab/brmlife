@@ -2,9 +2,10 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
-#include <unistd.h>
 
+#include <sys/select.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "agent.h"
 #include "connection.h"
@@ -17,6 +18,38 @@ connection::senses(int tick_id, char around[4])
 
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
+	pthread_mutex_unlock(&buf_lock);
+}
+
+void
+connection::actions(class agent *agent)
+{
+	pthread_mutex_lock(&buf_lock);
+	if (in_buf.find("\r\n\r\n") == std::string::npos) {
+		/* Not enough data, needs to wait until next turn, sorry. */
+		pthread_mutex_unlock(&buf_lock);
+		return;
+	}
+
+	while (in_buf.c_str()[0] != '\r') {
+		int nlofs = in_buf.find("\r\n");
+		std::string line = in_buf.substr(0, nlofs);
+		in_buf.erase(0, nlofs + 2);
+
+		int spofs = line.find(' ');
+		std::string cmd = line.substr(0, spofs);
+		line.erase(0, spofs + 1);
+
+		if (!cmd.compare("move_dir")) {
+			int x = 0, y = 0;
+			sscanf(line.c_str(), "%d %d", &x, &y);
+			agent->move_dir(x, y);
+		} else {
+			std::cout << "unknown line " << cmd << " " << line << " ...\n";
+		}
+	}
+	in_buf.erase(0, 2);
+
 	pthread_mutex_unlock(&buf_lock);
 }
 
@@ -69,7 +102,26 @@ connection::thread_loop(void)
 			pthread_mutex_unlock(&buf_lock);
 		}
 
-		/* TODO: The reading. ;-) */
+		struct timeval tv;
+		tv.tv_sec = 0; tv.tv_usec = 0;
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		FD_SET(fd, &rfds);
+		while (select(fd + 1, &rfds, NULL, NULL, &tv)) {
+			char cbuf[1024];
+			len = read(fd, cbuf, sizeof(cbuf));
+			if (len < 0) {
+				error = true;
+			} else {
+				bool want_moar = false;
+				pthread_mutex_lock(&buf_lock);
+				in_buf.append(cbuf, len);
+				want_moar = (in_buf.find("\r\n\r\n") == std::string::npos);
+				pthread_mutex_unlock(&buf_lock);
+				if (!want_moar)
+					break;
+			}
+		}
 
 		usleep(10000); // XXX: Signal-oriented instead.
 	}
