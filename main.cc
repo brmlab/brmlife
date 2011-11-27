@@ -67,7 +67,9 @@ next_agent:
 		int cfd = accept(lfd, NULL, NULL);
 		if (cfd >= 0) {
 			class connection *conn = new class connection(cfd);
-			agents.push_back(new class agent(aid++, map.agent_startpos(), conn));
+			class agent *a = new class agent(aid++, conn);
+			agents.push_back(a);
+			a->spawn_at(map.agent_startpos());
 		}
 
 		/* Collect and take actions. */

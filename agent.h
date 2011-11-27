@@ -16,13 +16,13 @@ public:
 	int energy;
 	bool dead;
 
-	agent(int id_, class tile &tile_, class connection *conn_)
-	: id (id_), conn (conn_), tile (&tile_)
+	agent(int id_, class connection *conn_)
+	: id (id_), conn (conn_)
 	{
-		put_at(tile_);
 		energy = world::newborn_energy;
 		dead = false;
 	};
+	void spawn_at(class tile &tile);
 
 	bool move_dir(int dir_x, int dir_y);
 	bool attack_dir(int dir_x, int dir_y);
@@ -35,10 +35,6 @@ public:
 	void on_senses_update(void);
 
 	~agent();
-
-private:
-	/* Just for initial placement. */
-	void put_at(class tile &tile);
 };
 
 #endif

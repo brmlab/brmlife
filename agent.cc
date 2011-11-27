@@ -8,8 +8,9 @@
 #include "map.h"
 
 void
-agent::put_at(class tile &t)
+agent::spawn_at(class tile &t)
 {
+	tile = &t;
 	if (!t.on_agent_enter(*this)) {
 		std::cerr << "Collision.";
 		exit(EXIT_FAILURE);
@@ -19,7 +20,7 @@ agent::put_at(class tile &t)
 bool
 agent::move_dir(int dir_x, int dir_y)
 {
-	if (dead)
+	if (dead || !tile)
 		return false;
 
 	chenergy(world::move_cost);
@@ -48,7 +49,7 @@ agent::move_dir(int dir_x, int dir_y)
 bool
 agent::attack_dir(int dir_x, int dir_y)
 {
-	if (dead)
+	if (dead || !tile)
 		return false;
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
@@ -112,7 +113,7 @@ agent::on_tick(void)
 void
 agent::on_senses_update(void)
 {
-	if (!conn)
+	if (!conn || !tile)
 		return;
 
 	conn->senses(tick_id, *this);
@@ -120,7 +121,8 @@ agent::on_senses_update(void)
 
 agent::~agent()
 {
-	tile->on_agent_leave(*this);
+	if (tile)
+		tile->on_agent_leave(*this);
 	if (conn) {
 		conn->cancel();
 		conn = NULL;
