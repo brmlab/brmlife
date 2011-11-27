@@ -32,6 +32,8 @@ public:
 	void cancel(void);
 
 private:
+	void bump(void);
+
 	std::string out_buf, in_buf;
 	pthread_mutex_t buf_lock;
 

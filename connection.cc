@@ -22,6 +22,14 @@ connection::senses(int tick_id, bool dead, int energy, char around[4])
 }
 
 void
+connection::bump(void)
+{
+	pthread_mutex_lock(&buf_lock);
+	out_buf.append("BUMP\n");
+	pthread_mutex_unlock(&buf_lock);
+}
+
+void
 connection::actions(class agent *agent)
 {
 	pthread_mutex_lock(&buf_lock);
@@ -45,7 +53,8 @@ connection::actions(class agent *agent)
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
-			agent->move_dir(x, y);
+			if (!agent->move_dir(x, y))
+				bump();
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
 		}

@@ -18,9 +18,11 @@ Each line starts with a single word (command name), plus
 some command-specific parameters. Note that newlines are
 CRLF ("\r\n"), not just LF ("\n")!
 
-The following inputs are supported:
+The following inputs (in no particular order) are supported:
 
 	tick <ticknum>
+	BUMP
+		if received, the agent's move failed
 	DEAD
 		if received, the agent is dead!
 	energy <points>
