@@ -25,6 +25,18 @@ agent::move_dir(int dir_x, int dir_y)
 	energy -= world::move_cost;
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
+	if (t2->agent) {
+		if (t2->agent->dead) {
+			class agent *a = t2->agent;
+			t2->on_agent_leave(*a);
+			/* Nom. */
+			energy += a->energy;
+			a->energy = 0;
+		} else {
+			return false;
+		}
+	}
+
 	if (!t2->on_agent_enter(*this))
 		return false;
 
