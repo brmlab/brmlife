@@ -42,6 +42,7 @@ main(int argc, char *argv[])
 	fcntl(lfd, F_SETFL, flags | O_NONBLOCK);
 
 	std::list<class agent *> agents;
+	int aid = 0;
 
 	/* Main tick loop. */
 
@@ -66,7 +67,7 @@ next_agent:
 		int cfd = accept(lfd, NULL, NULL);
 		if (cfd >= 0) {
 			class connection *conn = new class connection(cfd);
-			agents.push_back(new class agent(agents.size(), map.agent_startpos(), conn));
+			agents.push_back(new class agent(aid++, map.agent_startpos(), conn));
 		}
 
 		/* Collect and take actions. */
