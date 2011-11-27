@@ -45,6 +45,31 @@ agent::move_dir(int dir_x, int dir_y)
 	return true;
 }
 
+bool
+agent::attack_dir(int dir_x, int dir_y)
+{
+	if (dead)
+		return false;
+
+	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
+	if (!t2->agent || t2->agent->dead)
+		return false;
+
+	class agent *a = t2->agent;
+	chenergy(world::attack_cost);
+	a->chenergy(world::defense_cost);
+	if (dead || a->dead)
+		return true;
+
+	int dice = rand() % (energy + a->energy);
+	if (dice < energy) {
+		a->die();
+	} else {
+		die();
+	}
+	return true;
+}
+
 void
 agent::chenergy(int delta)
 {

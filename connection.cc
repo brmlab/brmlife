@@ -72,6 +72,13 @@ connection::actions(class agent &agent)
 			if (y < -1) y = -1; if (y > 1) y = 1;
 			if (!agent.move_dir(x, y))
 				bump();
+		} else if (!cmd.compare("attack_dir")) {
+			int x = 0, y = 0;
+			sscanf(line.c_str(), "%d %d", &x, &y);
+			if (x < -1) x = -1; if (x > 1) x = 1;
+			if (y < -1) y = -1; if (y > 1) y = 1;
+			if (!agent.attack_dir(x, y))
+				bump();
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
 		}

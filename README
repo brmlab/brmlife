@@ -23,6 +23,7 @@ The following inputs (in no particular order) are supported:
 	tick <ticknum>
 	BUMP
 		if received, the agent's move failed
+		(or attack of non-existent agent etc.)
 	DEAD
 		if received, the agent is dead!
 	energy <points>
