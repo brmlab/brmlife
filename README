@@ -21,6 +21,11 @@ CRLF ("\r\n"), not just LF ("\n")!
 The following inputs are supported:
 
 	tick <ticknum>
+	DEAD
+		if received, the agent is dead!
+	energy <points>
+		number of agent's energy points; disregard
+		in case of dead agents
 	around <chars>
 		<chars> describe tiles, clockwise from top,
 		in the immediate vicinity of the agent
