@@ -16,6 +16,7 @@
 #include "connection.h"
 #include "main.h"
 #include "map.h"
+#include "rawio.h"
 
 int tick_id = 0;
 
@@ -43,6 +44,11 @@ main(int argc, char *argv[])
 	class map map(argc < 2 ? 40 : atoi(argv[1]), argc < 3 ? 20 : atoi(argv[2]));
 	int herbs = argc < 4 ? map.w * map.h / world::herb_rate : atoi(argv[3]);
 
+	#ifdef RAWIO
+		if(rawio_cfg(&map)==-1)
+			std::cout<<"rawio_cfg: Cannost open cfg file"<<std::endl;
+	#endif
+	
 	srandom(time(NULL));
 
 	int lfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -106,6 +112,10 @@ main(int argc, char *argv[])
 		/* Finish a tick. */
 
 		map.print_map();
+		#ifdef RAWIO
+			if(rawio_map(&map)==-1)
+				std::cout<<"Rawio_map: Cannot open map file"<<std::endl;
+		#endif
 		std::cout << '\n';
 		usleep(1000000);
 		tick_id++;
