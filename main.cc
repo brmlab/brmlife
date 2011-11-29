@@ -96,6 +96,7 @@ main(int argc, char *argv[])
 
 		for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
 			(*agent)->on_action_takes();
+		drop_agents(); /* Some agents might have died. */
 
 		/* Run on_tick everywhere. */
 
