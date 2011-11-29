@@ -17,7 +17,7 @@ struct world {
 
 	const static int dead_body_energy = 2000;
 	const static double dead_body_energy_carryover = 0.5;
-	const static int dead_decay = -10;
+	const static int dead_decay = -50;
 
 	const static int herb_rate = 15; /* initially, one herb per herb_rate tiles */
 };
