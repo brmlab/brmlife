@@ -114,7 +114,7 @@ agent::on_action_takes(void)
 		return;
 
 	if (conn->error) {
-		die();
+		if (!dead) die();
 		conn->cancel();
 		conn = NULL;
 		return;
