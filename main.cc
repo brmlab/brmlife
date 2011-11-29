@@ -117,7 +117,7 @@ main(int argc, char *argv[])
 				std::cout<<"Rawio_map: Cannot open map file"<<std::endl;
 		#endif
 		std::cout << '\n';
-		usleep(1000000);
+		usleep(200000);
 		tick_id++;
 	}
 
