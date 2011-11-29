@@ -173,7 +173,7 @@ connection::thread_loop(void)
 		fd_set rfds;
 		FD_ZERO(&rfds);
 		FD_SET(fd, &rfds);
-		while (select(fd + 1, &rfds, NULL, NULL, &tv)) {
+		while (select(fd + 1, &rfds, NULL, &rfds, &tv)) {
 			char cbuf[1024];
 			len = read(fd, cbuf, sizeof(cbuf));
 			if (len < 0) {
