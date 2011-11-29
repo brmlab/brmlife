@@ -8,6 +8,8 @@
 #include "main.h"
 #include "map.h"
 
+static void spawn_herb(class tile &t);
+
 void
 agent::spawn(void)
 {
@@ -125,8 +127,11 @@ agent::on_tick(void)
 
 	} else {
 		energy += world::dead_decay;
-		if (energy < 0)
-			energy = 0;
+		if (energy < 0) {
+			tile->on_agent_leave(*this);
+			spawn_herb(*tile);
+			tile = NULL;
+		}
 	}
 }
 
