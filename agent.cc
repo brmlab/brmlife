@@ -110,6 +110,13 @@ agent::on_action_takes(void)
 	if (!conn)
 		return;
 
+	if (conn->error) {
+		die();
+		conn->cancel();
+		conn = NULL;
+		return;
+	}
+
 	conn->actions(*this);
 }
 
@@ -176,6 +183,7 @@ herb::on_tick(void)
 		spawn_herb(tile->tile_in_dir(0, 1));
 		spawn_herb(tile->tile_in_dir(-1, 0));
 		spawn_herb(tile->tile_in_dir(0, -1));
-		die();
+		tile->on_agent_leave(*this);
+		tile = NULL;
 	}
 }

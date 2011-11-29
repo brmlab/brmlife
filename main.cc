@@ -29,7 +29,7 @@ drop_agents(void)
 	for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
 	{
 next_agent:
-		if ((*agent)->conn ? (*agent)->conn->error : (*agent)->dead) {
+		if (!(*agent)->conn && !(*agent)->tile) {
 			delete *agent;
 			agent = agents.erase(agent);
 			if (agent != agents.end())
