@@ -42,13 +42,16 @@ agent::move_dir(int dir_x, int dir_y)
 		if (t2->herb_here()) {
 			class agent *a = t2->agent;
 			t2->on_agent_leave(*a);
+			a->tile = NULL;
 			chenergy(a->energy); /* Nom. */
-			a->die();
+
 		} else if (t2->agent->dead) {
 			class agent *a = t2->agent;
 			t2->on_agent_leave(*a);
+			a->tile = NULL; // XXX: If one agent kills another while third is trying to move at that place, the killed agent never receives a DEATH.
 			chenergy(a->energy); /* Nom. */
 			a->energy = 0;
+
 		} else {
 			return false;
 		}
