@@ -60,9 +60,8 @@ connection::actions(class agent &agent)
 		return;
 	}
 
+	int mask = 0;
 	while (in_buf.c_str()[0] != '\r') {
-		int mask = 0;
-
 		int nlofs = in_buf.find("\r\n");
 		std::string line = in_buf.substr(0, nlofs);
 		in_buf.erase(0, nlofs + 2);
