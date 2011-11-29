@@ -201,7 +201,7 @@ connection::thread_loop(void)
 			} else {
 				bool want_moar = false;
 				pthread_mutex_lock(&buf_lock);
-				in_buf.append(cbuf, len);
+				in_buf += std::string(cbuf, len);
 				want_moar = buf_incomplete(in_buf);
 				pthread_mutex_unlock(&buf_lock);
 				if (!want_moar)
