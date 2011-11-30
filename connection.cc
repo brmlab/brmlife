@@ -186,16 +186,20 @@ connection::thread_loop(void)
 
 		struct timeval tv;
 		tv.tv_sec = 0; tv.tv_usec = 0;
-		fd_set rfds;
-		FD_ZERO(&rfds);
-		FD_SET(fd, &rfds);
-		while (select(fd + 1, &rfds, NULL, &rfds, &tv)) {
+		fd_set rfds; FD_ZERO(&rfds); FD_SET(fd, &rfds);
+		fd_set efds; FD_ZERO(&efds); FD_SET(fd, &efds);
+		while (select(fd + 1, &rfds, NULL, &efds, &tv)) {
+			if (FD_ISSET(fd, &efds)) {
+				error = true;
+				break;
+			}
+
 			char cbuf[1024];
 			len = read(fd, cbuf, sizeof(cbuf));
-			if (len < 0) {
+			if (len <= 0) {
 				error = true;
-			} else if (len == 0) {
 				break;
+
 			} else {
 				bool want_moar = false;
 				pthread_mutex_lock(&buf_lock);
