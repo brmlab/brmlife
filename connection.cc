@@ -135,6 +135,7 @@ connection::actions(class agent &agent)
 void
 connection::cancel(void)
 {
+	error = true; // XXX: atomic, hopefully
 	pthread_cond_signal(&cancel_cond);
 }
 
