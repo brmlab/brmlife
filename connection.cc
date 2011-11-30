@@ -19,15 +19,12 @@ connection::senses(int tick_id, class agent &a)
 	assert(!negotiation);
 
 	char buf[1024];
-	snprintf(buf, sizeof(buf),
-		"tick %d\r\n"
-		"%s"
-		"energy %d\r\n"
-		"visual %s %s %s %s %s %s %s %s" " %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" "\r\n"
-		"\r\n",
-		tick_id,
-		a.dead ? "DEAD\r\n" : "",
-		a.energy,
+	char *bufp = buf;
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "tick %d\r\n", tick_id);
+	if (a.dead)
+		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "DEAD\r\n");
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "energy %d\r\n", a.energy);
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "visual %s %s %s %s %s %s %s %s" " %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" "\r\n",
 
 		a.tile->tile_in_dir(0, -1).str(),
 		a.tile->tile_in_dir(1, -1).str(),
@@ -53,8 +50,8 @@ connection::senses(int tick_id, class agent &a)
 		a.tile->tile_in_dir(-2, 0).str(),
 		a.tile->tile_in_dir(-2, -1).str(),
 		a.tile->tile_in_dir(-2, -2).str(),
-		a.tile->tile_in_dir(-1, -2).str()
-	);
+		a.tile->tile_in_dir(-1, -2).str());
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
 
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
