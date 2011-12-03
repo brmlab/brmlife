@@ -62,7 +62,7 @@ main(int argc, char *argv[])
 		switch (opt) {
 			case 'h': herbs_opt = atoi(optarg); break;
 			case 'p': port = atoi(optarg); break;
-			case 't': ticklen = atoi(optarg) * 1000;
+			case 't': ticklen = atoi(optarg) * 1000; break;
 			case 'x': w = atoi(optarg); break;
 			case 'y': h = atoi(optarg); break;
 			default: /* '?' */
