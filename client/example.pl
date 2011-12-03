@@ -40,27 +40,15 @@ sub tick($) {
 		my ($type, $value) = ($1, $2);
 
 		if ($type eq 'tick') {
-			if ($value =~ /\D/) {
-				print "[ee] type tick wrong value\n";
-				print $value . "\n";
-				exit(-1);
-			}
+			$value =~ /^\d+$/ or die "[ee] type tick wrong value ($value)\n";
 			$state{tick} =  $value;
 
 		} elsif ($type eq 'energy') {
-			if ($value =~ /\D/) {
-				print "[ee] type energy wrong value\n";
-				print $value . "\n";
-				exit(-1);
-			}
+			$value =~ /^\d+$/ or die "[ee] type energy wrong value ($value)\n";
 			$state{energy} =  $value;
 
 		} elsif ($type eq 'visual') {
-			if ($value !~ /^([^ ][^ ] )+([^ ][^ ])$/) {
-				print "[ee] type visual wrong value\n";
-				print $value . "\n";
-				exit(-1);
-			}
+			$value =~ /^([^ ][^ ] )+([^ ][^ ])$/ or die "[ee] type visual wrong value ($value)\n";
 			$state{visual} = [ split(" ", $value) ];
 		}
 	}
