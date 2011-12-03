@@ -72,7 +72,7 @@ agent::attack_dir(int dir_x, int dir_y)
 		return false;
 
 	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
-	if (!t2->agent || t2->agent->dead)
+	if (!t2->agent || t2->agent->dead || t2->herb_here())
 		return false;
 
 	class agent *a = t2->agent;
