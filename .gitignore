@@ -2,3 +2,5 @@
 .*.swp
 brmlife
 *.o
+rawio_cfg
+rawio_map
