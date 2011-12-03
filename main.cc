@@ -52,8 +52,24 @@ clear(void)
 int
 main(int argc, char *argv[])
 {
-	class map map(argc < 2 ? 40 : atoi(argv[1]), argc < 3 ? 20 : atoi(argv[2]));
-	int herbs = argc < 4 ? map.w * map.h / world::herb_rate : atoi(argv[3]);
+	int w = 40, h = 20;
+	int herbs_opt = -1;
+
+	int opt;
+	while ((opt = getopt(argc, argv, "h:x:y:")) != -1) {
+		switch (opt) {
+			case 'h': herbs_opt = atoi(optarg); break;
+			case 'x': w = atoi(optarg); break;
+			case 'y': h = atoi(optarg); break;
+			default: /* '?' */
+				fprintf(stderr, "Usage: %s [-h HERBS] [-x WIDTH] [-y HEIGHT]\n",
+						argv[0]);
+				exit(EXIT_FAILURE);
+		}
+	}
+
+	class map map(w, h);
+	int herbs = herbs_opt < 0 ? map.w * map.h / world::herb_rate : herbs_opt;
 
 	#ifdef RAWIO
 		if(rawio_cfg(&map)==-1)
