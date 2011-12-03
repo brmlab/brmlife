@@ -94,6 +94,8 @@ void
 agent::chenergy(int delta)
 {
 	energy += delta;
+	if (energy > world::max_energy)
+		energy = world::max_energy;
 	if (energy <= 0)
 		die();
 }

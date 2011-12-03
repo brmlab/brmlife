@@ -4,6 +4,7 @@
 struct world {
 	const static int newborn_energy = 5000;
 	const static int herb_energy = 1000;
+	const static int max_energy = 20000;
 
 	const static int move_cost = -50;
 	const static int attack_cost = -400;
