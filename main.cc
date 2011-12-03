@@ -55,16 +55,18 @@ main(int argc, char *argv[])
 	int w = 40, h = 20;
 	int herbs_opt = -1;
 	int port = 27753;
+	useconds_t ticklen = 200000;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "h:p:x:y:")) != -1) {
+	while ((opt = getopt(argc, argv, "h:p:t:x:y:")) != -1) {
 		switch (opt) {
 			case 'h': herbs_opt = atoi(optarg); break;
 			case 'p': port = atoi(optarg); break;
+			case 't': ticklen = atoi(optarg) * 1000;
 			case 'x': w = atoi(optarg); break;
 			case 'y': h = atoi(optarg); break;
 			default: /* '?' */
-				fprintf(stderr, "Usage: %s [-h HERBS] [-p PORT] [-x WIDTH] [-y HEIGHT]\n",
+				fprintf(stderr, "Usage: %s [-h HERBS] [-p PORT] [-t TICKMS] [-x WIDTH] [-y HEIGHT]\n",
 						argv[0]);
 				exit(EXIT_FAILURE);
 		}
@@ -148,7 +150,7 @@ main(int argc, char *argv[])
 				std::cout<<"Rawio_map: Cannot open map file"<<std::endl;
 		#endif
 		std::cout << '\n';
-		usleep(200000);
+		usleep(ticklen);
 		tick_id++;
 	}
 
