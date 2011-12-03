@@ -114,7 +114,7 @@ sub take_action($%) {
 		}
 	}
 
-	print "moves ".join(", ", @move)."\n";
+	print "moves ".join(", ", @move)." => ($max->[0],$max->[1])\n";
 
 	if ($attack[dirindex($max)]) {
 		print $socket "attack_dir $max->[0] $max->[1]\r\n";
