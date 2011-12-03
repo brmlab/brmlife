@@ -126,7 +126,8 @@ sub take_action($%) {
 # connect
 my ($remote_host, $remote_port, $socket);
 $remote_host = "localhost";
-$remote_port = 27753;
+$remote_port = $ARGV[0];
+$remote_port ||= 27753;
 
 $socket = IO::Socket::INET->new(
     PeerAddr => $remote_host,
