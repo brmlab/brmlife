@@ -109,10 +109,12 @@ sub take_action($%) {
 		}
 
 		if ($move[dirindex($dir)] > $move[dirindex($max)] or
-		    ($move[dirindex($dir)] == $move[dirindex($max)]) and (int rand(2))) {
+		    ($move[dirindex($dir)] == $move[dirindex($max)] and int rand(2))) {
 			$max = $dir;
 		}
 	}
+
+	print "moves ".join(", ", @move)."\n";
 
 	if ($attack[dirindex($max)]) {
 		print $socket "attack_dir $max->[0] $max->[1]\r\n";
