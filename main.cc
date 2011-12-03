@@ -54,15 +54,17 @@ main(int argc, char *argv[])
 {
 	int w = 40, h = 20;
 	int herbs_opt = -1;
+	int port = 27753;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "h:x:y:")) != -1) {
+	while ((opt = getopt(argc, argv, "h:p:x:y:")) != -1) {
 		switch (opt) {
 			case 'h': herbs_opt = atoi(optarg); break;
+			case 'p': port = atoi(optarg); break;
 			case 'x': w = atoi(optarg); break;
 			case 'y': h = atoi(optarg); break;
 			default: /* '?' */
-				fprintf(stderr, "Usage: %s [-h HERBS] [-x WIDTH] [-y HEIGHT]\n",
+				fprintf(stderr, "Usage: %s [-h HERBS] [-p PORT] [-x WIDTH] [-y HEIGHT]\n",
 						argv[0]);
 				exit(EXIT_FAILURE);
 		}
@@ -82,7 +84,7 @@ main(int argc, char *argv[])
 	struct sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(27753);
+	sin.sin_port = htons(port);
 	sin.sin_addr.s_addr = INADDR_ANY;
 	int optval = 1;
 	setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
