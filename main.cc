@@ -22,10 +22,12 @@ int tick_id = 0;
 
 int agent_id = 0;
 std::list<class agent *> agents;
+int client_n = 0;
 
 static void
 drop_agents(void)
 {
+	client_n = 0;
 	for (std::list<class agent *>::iterator agent = agents.begin(); agent != agents.end(); agent++)
 	{
 next_agent:
@@ -34,6 +36,8 @@ next_agent:
 			agent = agents.erase(agent);
 			if (agent != agents.end())
 				goto next_agent;
+		} else if ((*agent)->conn) {
+			client_n++;
 		}
 	}
 }
@@ -62,7 +66,7 @@ main(int argc, char *argv[])
 	struct sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(27753);
+	sin.sin_port = htons(27754);
 	sin.sin_addr.s_addr = INADDR_ANY;
 	int optval = 1;
 	setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
@@ -85,7 +89,7 @@ main(int argc, char *argv[])
 
 	while (true) {
 		clear();
-		std::cout << "tick " << tick_id << '\n';
+		std::cout << "tick " << tick_id << "; agents " << agents.size() << "; clients " << client_n << '\n';
 
 		/* Drop disconnected agents. */
 
