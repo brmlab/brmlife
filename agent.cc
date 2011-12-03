@@ -81,16 +81,14 @@ agent::attack_dir(int dir_x, int dir_y)
 	if (dead || a->dead)
 		return true;
 
+	/* Very simple RPG-ish interaction. */
 	int attack_dice = round(attr.attack * energy);
+	int attack_roll = random() % attack_dice;
 	int defense_dice = round(a->attr.defense * a->energy);
-
-	int dice = random() % (attack_dice + defense_dice);
-	if (dice < attack_dice) {
-		a->die();
-	} else {
-		die();
-	}
-	return true;
+	int defense_roll = random() % defense_dice;
+	if (attack_roll > defense_roll)
+		a->chenergy(defense_roll - attack_roll);
+	return attack_roll >= defense_roll;
 }
 
 void
