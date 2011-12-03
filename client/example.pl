@@ -63,14 +63,19 @@ sub tick($) {
 sub take_action($%) {
 	my ($socket, %state) = @_;
 
+	# FIXME: We use a common direction choice for both move_dir
+	# and attack_dir, but in fact the agent can do both actions
+	# in a single tick and they can be in different directions.
+
 	# Relative x,y coordinates for each movement/attack direction.
 	my @dirs = ([0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]);
 
 	# Move/attack desires for each direction.
-	my @move = ((0, 0, 0), (0, 0, 0), (0, 0, 0));
+	# We prefer moves in the diagonal direction.
+	my @move = ((1, 0, 1), (0, 0, 0), (1, 0, 1));
 	my @attack = ((0, 0, 0), (0, 0, 0), (0, 0, 0));
 
-	# dirindex($x) returns @move, $attack index for given @dirs item.
+	# dirindex($x) returns @move, @attack index for given @dirs item.
 	sub dirindex { my ($dir) = @_; $dir->[0]+1 + 3*($dir->[1]+1) }
 
 	# Relative x,y coordinates for each visual input, in order.
@@ -79,8 +84,9 @@ sub take_action($%) {
 		[0, -2], [1, -2], [2, -2], [2, -1], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2], [-1, 2], [-2, 2], [-2, 1], [-2, 0], [-2, -1], [-2, -2], [-1, -2],
 	);
 
-	# Default direction in case of nothing interesting in the vicinity.
 	my $max = $dirs[1];
+	# Default direction in case of nothing interesting in the vicinity
+	# is [1, -1].
 
 	for my $i (0..$#{$state{visual}}) {
 		my ($type, $agent) = split(//, $state{visual}->[$i]);
