@@ -38,6 +38,13 @@ next_agent:
 	}
 }
 
+static void
+clear(void)
+{
+	printf("\033[H\033[J");
+	fflush(stdout);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -77,6 +84,7 @@ main(int argc, char *argv[])
 	/* Main tick loop. */
 
 	while (true) {
+		clear();
 		std::cout << "tick " << tick_id << '\n';
 
 		/* Drop disconnected agents. */
