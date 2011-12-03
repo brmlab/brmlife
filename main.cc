@@ -66,7 +66,7 @@ main(int argc, char *argv[])
 	struct sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(27754);
+	sin.sin_port = htons(27753);
 	sin.sin_addr.s_addr = INADDR_ANY;
 	int optval = 1;
 	setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
