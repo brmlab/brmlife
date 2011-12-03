@@ -39,7 +39,15 @@ sub tick($) {
 		$line =~ m/^([^ ]+) (.*)$/;
 		my ($type, $value) = ($1, $2);
 
-		if ($type eq 'energy') {
+		if ($type eq 'tick') {
+			if ($value =~ /\D/) {
+				print "[ee] type tick wrong value\n";
+				print $value . "\n";
+				exit(-1);
+			}
+			$state{tick} =  $value;
+
+		} elsif ($type eq 'energy') {
 			if ($value =~ /\D/) {
 				print "[ee] type energy wrong value\n";
 				print $value . "\n";
