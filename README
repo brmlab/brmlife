@@ -38,6 +38,12 @@ The following inputs (in no particular order) are supported:
 				 a dead agent
 				 A alive agent
 				 x herp
+	pheromones (<ph>,<ph>,<ph>,...) (<ph>...)...
+		(<ph>,...) describes set of pheromones on a tile,
+		in the same order as visual
+		<ph> format is <id>:<intensity>
+			<id>: pheromone id 0..65535
+			<intensity>: floating-point number
 
 The following outputs are supported:
 
@@ -47,6 +53,12 @@ The following outputs are supported:
 	attack_dir <x> <y>
 		<x> and <y> are integer offsets relative
 		to the current position; may be just {-1,0,1}
+	secrete <phid> <phintensity>
+		produce a pheromone; pheromones are initially
+		associated with an agent and trailed at tiles
+		visited by the agent; pheromones with lower id
+		transfer from agent to tile faster
+		energy required is proportional to phintensity
 
 
 After connecting, the client specifies its desired attributes,
