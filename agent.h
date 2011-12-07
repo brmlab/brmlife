@@ -7,6 +7,21 @@
 
 class connection;
 
+/* Agent object lifetime is slightly complicated, since an agent
+ * may be tied to a tile or a connection or both:
+ *
+ * - tile set, connection set:  active client or connected corpse
+ * - tile set, connection NULL: herb or disconnected corpse
+ * - tile NULL, connection set: negotiation or zombie connection with no corpse anymore
+ *
+ * Agents are created (we may not keep this list up to date) on incoming
+ * connection, by blooming herb or when converting corpse to herb. Herbs
+ * are immediately spawned (assigned a tile); clients are spawned only
+ * after negotiation.
+ *
+ * Agents are destroyed in the main loop when they are completely abandoned,
+ * i.e. both their tile and connection become NULL. */
+
 class agent {
 public:
 	int id;
