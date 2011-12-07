@@ -1,7 +1,7 @@
 CFLAGS=-Wall -g -pthread
 LDFLAGS=-pthread
 
-OBJS=main.o map.o agent.o connection.o
+OBJS=main.o map.o agent.o connection.o pheromone.o
 
 brmlife: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^

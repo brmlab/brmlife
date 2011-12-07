@@ -1,6 +1,8 @@
 #ifndef BRMLIFE__MAP_H
 #define BRMLIFE__MAP_H
 
+#include "pheromone.h"
+
 class agent;
 class map;
 
@@ -10,6 +12,7 @@ public:
 	class map &map;
 
 	class agent *agent;
+	class pheromones pheromones;
 
 	tile(int x_, int y_, class map &map_)
 	: x(x_), y(y_), map(map_), agent(NULL) {};

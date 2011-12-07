@@ -91,6 +91,15 @@ agent::attack_dir(int dir_x, int dir_y)
 	return attack_roll >= defense_roll;
 }
 
+bool
+agent::secrete(int id, double intensity)
+{
+	pheromone p(id, intensity);
+	pheromones.secrete(p);
+	chenergy(intensity * world::pheromone_cost);
+	return true;
+}
+
 void
 agent::chenergy(int delta)
 {
@@ -129,8 +138,12 @@ agent::on_action_takes(void)
 void
 agent::on_tick(void)
 {
+	pheromones.decay(world::phdecay_gamma, world::phdecay_delta);
+
 	if (!tile)
 		return;
+
+	pheromones.seep(tile->pheromones, world::phseep_alpha, world::phseep_beta);
 
 	if (!dead) {
 		chenergy(world::sun_energy);

@@ -2,6 +2,7 @@
 #define BRMLIFE__AGENT_H
 
 #include "map.h"
+#include "pheromone.h"
 #include "world.h"
 
 class connection;
@@ -23,6 +24,8 @@ public:
 	int energy;
 	bool dead;
 
+	class pheromones pheromones;
+
 	agent(int id_, class connection *conn_, class map &map_)
 	: id (id_), conn (conn_), map (map_), tile (NULL)
 	{
@@ -37,6 +40,7 @@ public:
 
 	bool move_dir(int dir_x, int dir_y);
 	bool attack_dir(int dir_x, int dir_y);
+	bool secrete(int id, double intensity);
 
 	void chenergy(int delta);
 	void die(void);

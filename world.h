@@ -9,6 +9,7 @@ struct world {
 	const static int move_cost = -50;
 	const static int attack_cost = -400;
 	const static int defense_cost = -200;
+	const static int pheromone_cost = -10;
 
 	const static int move_idle_cost = -15; /* ... * attr.move */
 	const static int attack_idle_cost = -15; /* ... * attr.attack */
@@ -21,6 +22,11 @@ struct world {
 	const static int dead_decay = -50;
 
 	const static int herb_rate = 15; /* initially, one herb per herb_rate tiles */
+
+	const static double phseep_alpha = 0.1;
+	const static double phseep_beta = 0.05;
+	const static double phdecay_gamma = 0.95;
+	const static double phdecay_delta = 0.01;
 };
 
 #endif

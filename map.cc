@@ -39,6 +39,8 @@ tile::on_tick(void)
 		if (tile_in_dir(-1, 0).herb_here()) { tile_in_dir(-1, 0).agent->chenergy(world::soil_energy / herbs); }
 		if (tile_in_dir(0, -1).herb_here()) { tile_in_dir(0, -1).agent->chenergy(world::soil_energy / herbs); }
 	}
+
+	pheromones.decay(world::phdecay_gamma, world::phdecay_delta);
 }
 
 bool

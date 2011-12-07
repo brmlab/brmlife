@@ -37,6 +37,19 @@ connection::senses(int tick_id, class agent &a)
 	}
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
 
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "pheromones");
+	for (int i = 0; i < dir_n; i++) {
+		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), " (");
+		class pheromones &ps = a.tile->tile_in_dir(dirs[i][0], dirs[i][1]).pheromones;
+		for (std::list<class pheromone>::iterator pi = ps.spectrum.begin(); pi != ps.spectrum.end(); pi++) {
+			if (pi != ps.spectrum.begin())
+				bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ",");
+			bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "%d:%f", pi->id, pi->val);
+		}
+		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ")");
+	}
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
+
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
@@ -102,6 +115,14 @@ connection::actions(class agent &agent)
 			if (!agent.attack_dir(x, y))
 				bump();
 			mask |= 2;
+		} else if (!negotiation && !cmd.compare("secrete")) {
+			int id = 0; double v = 0;
+			sscanf(line.c_str(), "%d %lf", &id, &v);
+			if (id < 0) id = 0; if (id >= PH_COUNT) id = PH_COUNT - 1;
+			if (v < 0) v = 0;
+			if (!agent.secrete(id, v))
+				bump();
+			/* We deliberately allow multiple secrete commands. */
 
 		} else {
 			std::cout << "unknown line " << cmd << " " << line << " ...\n";
