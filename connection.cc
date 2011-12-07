@@ -41,10 +41,31 @@ connection::senses(int tick_id, class agent &a)
 	for (int i = 0; i < dir_n; i++) {
 		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), " (");
 		class pheromones &ps = a.tile->tile_in_dir(dirs[i][0], dirs[i][1]).pheromones;
-		for (std::list<class pheromone>::iterator pi = ps.spectrum.begin(); pi != ps.spectrum.end(); pi++) {
-			if (pi != ps.spectrum.begin())
-				bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ",");
-			bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "%d:%f", pi->id, pi->val);
+		class agent *ai = a.tile->tile_in_dir(dirs[i][0], dirs[i][1]).agent;
+		if (ai) {
+			/* We need to merge pheromones. */
+			class pheromones &pt = ai->pheromones;
+			std::list<class pheromone>::iterator pi, pj;
+			for (pi = ps.spectrum.begin(), pj = pt.spectrum.begin();
+			     pi != ps.spectrum.end() || pj != pt.spectrum.end(); ) {
+				if (pi != ps.spectrum.begin() || pj != pt.spectrum.begin())
+					bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ",");
+				int i; double v;
+				if (pj == pt.spectrum.end() || (pi != ps.spectrum.end() && pi->id < pj->id)) {
+					i = pi->id; v = pi->val; ++pi;
+				} else if (pi == ps.spectrum.end() || pj->id < pi->id) {
+					i = pj->id; v = pj->val; ++pj;
+				} else {
+					i = pi->id; v = pi->val + pj->val; ++pi, ++pj;
+				}
+				bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "%d:%f", i, v);
+			}
+		} else {
+			for (std::list<class pheromone>::iterator pi = ps.spectrum.begin(); pi != ps.spectrum.end(); pi++) {
+				if (pi != ps.spectrum.begin())
+					bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ",");
+				bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "%d:%f", pi->id, pi->val);
+			}
 		}
 		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), ")");
 	}

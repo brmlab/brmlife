@@ -40,7 +40,8 @@ The following inputs (in no particular order) are supported:
 				 x herp
 	pheromones (<ph>,<ph>,<ph>,...) (<ph>...)...
 		(<ph>,...) describes set of pheromones on a tile,
-		in the same order as visual
+		in the same order as visual; if agent is on a tile,
+		its pheromones are merged with tile pheromones
 		<ph> format is <id>:<intensity>
 			<id>: pheromone id 0..65535
 			<intensity>: floating-point number
