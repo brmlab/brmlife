@@ -18,41 +18,26 @@ connection::senses(int tick_id, class agent &a)
 {
 	assert(!negotiation);
 
+	int dirs[][2] = {
+		{0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1},
+		{0,-2}, {1,-2}, {2,-2}, {2,-1}, {2,0}, {2,1}, {2,2}, {1,2}, {0,2}, {-1,2}, {-2,2}, {-2,1}, {-2,0}, {-2,-1}, {-2,-2}, {-1,-2},
+	};
+	int dir_n = sizeof(dirs) / sizeof(dirs[0]);
+
 	char buf[1024];
 	char *bufp = buf;
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "tick %d\r\n", tick_id);
 	if (a.dead)
 		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "DEAD\r\n");
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "energy %d\r\n", a.energy);
-	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "visual %s %s %s %s %s %s %s %s" " %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" "\r\n",
 
-		a.tile->tile_in_dir(0, -1).str(),
-		a.tile->tile_in_dir(1, -1).str(),
-		a.tile->tile_in_dir(1, 0).str(),
-		a.tile->tile_in_dir(1, 1).str(),
-		a.tile->tile_in_dir(0, 1).str(),
-		a.tile->tile_in_dir(-1, 1).str(),
-		a.tile->tile_in_dir(-1, 0).str(),
-		a.tile->tile_in_dir(-1, -1).str(),
-
-		a.tile->tile_in_dir(0, -2).str(),
-		a.tile->tile_in_dir(1, -2).str(),
-		a.tile->tile_in_dir(2, -2).str(),
-		a.tile->tile_in_dir(2, -1).str(),
-		a.tile->tile_in_dir(2, 0).str(),
-		a.tile->tile_in_dir(2, 1).str(),
-		a.tile->tile_in_dir(2, 2).str(),
-		a.tile->tile_in_dir(1, 2).str(),
-		a.tile->tile_in_dir(0, 2).str(),
-		a.tile->tile_in_dir(-1, 2).str(),
-		a.tile->tile_in_dir(-2, 2).str(),
-		a.tile->tile_in_dir(-2, 1).str(),
-		a.tile->tile_in_dir(-2, 0).str(),
-		a.tile->tile_in_dir(-2, -1).str(),
-		a.tile->tile_in_dir(-2, -2).str(),
-		a.tile->tile_in_dir(-1, -2).str());
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "visual");
+	for (int i = 0; i < dir_n; i++) {
+		bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), " %s", a.tile->tile_in_dir(dirs[i][0], dirs[i][1]).str());
+	}
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
 
+	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "\r\n");
 	pthread_mutex_lock(&buf_lock);
 	out_buf.append(buf);
 	pthread_mutex_unlock(&buf_lock);
