@@ -192,6 +192,15 @@ spawn_herb(class tile &t)
 }
 
 void
+herb::smell_herb(class tile &t)
+{
+	/* Herb pheromone ("smell") #32768. */
+	class pheromone p(32768, world::herb_phintensity);
+	t.pheromones.secrete(p);
+	chenergy(p.val * world::pheromone_cost);
+}
+
+void
 herb::on_tick(void)
 {
 	agent::on_tick();
@@ -204,5 +213,10 @@ herb::on_tick(void)
 		spawn_herb(tile->tile_in_dir(0, -1));
 		tile->on_agent_leave(*this);
 		tile = NULL;
+	} else {
+		smell_herb(tile->tile_in_dir(1, 0));
+		smell_herb(tile->tile_in_dir(0, 1));
+		smell_herb(tile->tile_in_dir(-1, 0));
+		smell_herb(tile->tile_in_dir(0, -1));
 	}
 }

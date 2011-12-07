@@ -15,13 +15,14 @@ struct world {
 	const static int attack_idle_cost = -15; /* ... * attr.attack */
 	const static int defense_idle_cost = -15; /* ... * attr.defense */
 	const static int sun_energy = 10;
-	const static int soil_energy = 10; /* ... times five for lone herbs, times one for dense forests */
+	const static int soil_energy = 20; /* ... times five for lone herbs, times one for dense forests */
 
 	const static int dead_body_energy = 2000;
 	const static double dead_body_energy_carryover = 0.5;
 	const static int dead_decay = -50;
 
 	const static int herb_rate = 15; /* initially, one herb per herb_rate tiles */
+	const static double herb_phintensity = 1.0;
 
 	const static double phseep_alpha = 0.1;
 	const static double phseep_beta = 0.05;

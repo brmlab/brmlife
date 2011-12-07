@@ -64,6 +64,8 @@ public:
 	}
 
 	void on_tick(void);
+private:
+	void smell_herb(class tile &);
 };
 
 #endif
