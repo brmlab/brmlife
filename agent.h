@@ -43,7 +43,7 @@ public:
 	bool secrete(int id, double intensity);
 
 	void chenergy(int delta);
-	void die(void);
+	virtual void die(void);
 
 	void on_action_takes(void);
 	virtual void on_tick(void);
@@ -63,6 +63,7 @@ public:
 		energy = world::herb_energy;
 	}
 
+	void die(void);
 	void on_tick(void);
 private:
 	void smell_herb(class tile &);

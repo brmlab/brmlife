@@ -181,6 +181,14 @@ agent::~agent()
 }
 
 
+void
+herb::die(void)
+{
+	/* No corpse, just clean up tile. */
+	tile->on_agent_leave(*this);
+	tile = NULL;
+}
+
 static void
 spawn_herb(class tile &t)
 {
@@ -211,8 +219,7 @@ herb::on_tick(void)
 		spawn_herb(tile->tile_in_dir(0, 1));
 		spawn_herb(tile->tile_in_dir(-1, 0));
 		spawn_herb(tile->tile_in_dir(0, -1));
-		tile->on_agent_leave(*this);
-		tile = NULL;
+		die();
 	} else {
 		smell_herb(tile->tile_in_dir(1, 0));
 		smell_herb(tile->tile_in_dir(0, 1));
