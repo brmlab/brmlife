@@ -123,6 +123,7 @@ sub take_action($%) {
 	} else {
 		print $socket "move_dir $max->[0] $max->[1]\r\n";
 	}
+	print $socket "secrete 65536 1\r\n";
 	print $socket "\r\n";
 }
 
