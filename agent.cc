@@ -92,6 +92,53 @@ agent::attack_dir(int dir_x, int dir_y)
 }
 
 bool
+agent::breed_dir(int dir_x, int dir_y, std::string info)
+{
+	if (dead || !tile)
+		return false;
+
+	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
+	class agent *a = t2->agent;
+	if (!a || a->dead || !a->conn)
+		return false;
+
+	/* Self-breeding may not be a bad thing, but there is just
+	 * a technical problem with in/out buf locking. */
+	assert(a != this);
+
+	if (abs(a->attr.breeding_key - attr.breeding_key) > world::breeding_kappa)
+		return false;
+
+	chenergy(world::breed_out_cost);
+	a->chenergy(world::breed_in_cost);
+	if (a->dead)
+		return false;
+
+	/* Grab a tile. */
+	int spawn_dirs[][2] = {
+		{0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1},
+	};
+	int spawn_dir_n = sizeof(spawn_dirs) / sizeof(spawn_dirs[0]);
+	class tile *tb = NULL;
+	for (int i = 0; i < spawn_dir_n; i++) {
+		class tile *t = &tile->tile_in_dir(spawn_dirs[i][0], spawn_dirs[i][1]);
+		if (!t->agent) {
+			tb = t;
+			break;
+		}
+	}
+	if (!tb)
+		return false; // still-born
+
+	/* New agent, yay. */
+	class agent *ab = new class agent(agent_id++, NULL, map);
+	agents.push_back(ab);
+	ab->spawn_at(*tb);
+	a->conn->bred(ab->id, info);
+	return true;
+}
+
+bool
 agent::secrete(int id, double intensity)
 {
 	pheromone p(id, intensity);

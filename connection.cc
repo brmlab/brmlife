@@ -80,6 +80,16 @@ connection::senses(int tick_id, class agent &a)
 }
 
 void
+connection::bred(int agent_id, std::string &info)
+{
+	pthread_mutex_lock(&buf_lock);
+	std::stringstream s;
+	s << "BRED " << agent_id << " " << info << "\r\n";
+	out_buf.append(s.str());
+	pthread_mutex_unlock(&buf_lock);
+}
+
+void
 connection::bump(void)
 {
 	/* Must be called with buf_lock held! */
@@ -121,6 +131,8 @@ connection::actions(class agent *agent)
 			sscanf(line.c_str(), "%lf", &rate);
 			if (rate >= 0 && rate <= 1)
 				agent->attr.defense = rate;
+		} else if (negotiation && !cmd.compare("breeding_key")) {
+			sscanf(line.c_str(), "%ld", &agent->attr.breeding_key);
 
 		} else if (negotiation && !cmd.compare("agent_id")) {
 			int id = -1;
@@ -161,6 +173,15 @@ bump_negot:
 			if (!agent->attack_dir(x, y))
 				bump();
 			mask |= 2;
+		} else if (!negotiation && !cmd.compare("breed_dir") && !(mask & 4)) {
+			int x = 0, y = 0, len = 0;
+			sscanf(line.c_str(), "%d %d %n", &x, &y, &len);
+			line.erase(0, len);
+			if (x < -1) x = -1; if (x > 1) x = 1;
+			if (y < -1) y = -1; if (y > 1) y = 1;
+			if (!agent->breed_dir(x, y, line))
+				bump();
+			mask |= 4;
 		} else if (!negotiation && !cmd.compare("secrete")) {
 			int id = 0; double v = 0;
 			sscanf(line.c_str(), "%d %lf", &id, &v);
@@ -177,8 +198,9 @@ bump_negot:
 	in_buf.erase(0, 2);
 
 	if (negotiation) {
-		negotiation = false;
-		agent->spawn();
+		agent->newborn = negotiation = false;
+		if (!agent->tile)
+			agent->spawn();
 
 		std::stringstream s;
 		s << "agent_id " << agent->id << "\r\n";

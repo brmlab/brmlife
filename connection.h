@@ -28,6 +28,7 @@ public:
 	}
 
 	void senses(int tick_id, class agent &);
+	void bred(int agent_id, std::string &info);
 	void actions(class agent *);
 
 	void cancel(void);
