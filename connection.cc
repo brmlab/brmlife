@@ -87,7 +87,7 @@ connection::bump(void)
 }
 
 void
-connection::actions(class agent &agent)
+connection::actions(class agent *agent)
 {
 	pthread_mutex_lock(&buf_lock);
 	if (buf_incomplete(in_buf)) {
@@ -107,20 +107,20 @@ connection::actions(class agent &agent)
 		line.erase(0, spofs + 1);
 
 		if (negotiation && !cmd.compare("move")) {
-			double rate = agent.attr.move;
+			double rate = agent->attr.move;
 			sscanf(line.c_str(), "%lf", &rate);
 			if (rate >= 0 && rate <= 1)
-				agent.attr.move = rate;
+				agent->attr.move = rate;
 		} else if (negotiation && !cmd.compare("attack")) {
-			double rate = agent.attr.attack;
+			double rate = agent->attr.attack;
 			sscanf(line.c_str(), "%lf", &rate);
 			if (rate >= 0 && rate <= 1)
-				agent.attr.attack = rate;
+				agent->attr.attack = rate;
 		} else if (negotiation && !cmd.compare("defense")) {
-			double rate = agent.attr.defense;
+			double rate = agent->attr.defense;
 			sscanf(line.c_str(), "%lf", &rate);
 			if (rate >= 0 && rate <= 1)
-				agent.attr.defense = rate;
+				agent->attr.defense = rate;
 
 		} else if (negotiation && !cmd.compare("agent_id")) {
 			int id = -1;
@@ -140,8 +140,9 @@ bump_negot:
 					goto bump_negot;
 				/* Round and round she goes, where she stops, nobody knows. */
 				a2->conn = this;
-				agent.conn = NULL;
-				negotiation = false;
+				agent->conn = NULL;
+				agent = a2;
+				negotiation = agent->newborn;
 			}
 
 		} else if (!negotiation && !cmd.compare("move_dir") && !(mask & 1)) {
@@ -149,7 +150,7 @@ bump_negot:
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
-			if (!agent.move_dir(x, y))
+			if (!agent->move_dir(x, y))
 				bump();
 			mask |= 1;
 		} else if (!negotiation && !cmd.compare("attack_dir") && !(mask & 2)) {
@@ -157,7 +158,7 @@ bump_negot:
 			sscanf(line.c_str(), "%d %d", &x, &y);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
-			if (!agent.attack_dir(x, y))
+			if (!agent->attack_dir(x, y))
 				bump();
 			mask |= 2;
 		} else if (!negotiation && !cmd.compare("secrete")) {
@@ -165,7 +166,7 @@ bump_negot:
 			sscanf(line.c_str(), "%d %lf", &id, &v);
 			if (id < 0) id = 0; if (id >= PH_COUNT) id = PH_COUNT - 1;
 			if (v < 0) v = 0;
-			if (!agent.secrete(id, v))
+			if (!agent->secrete(id, v))
 				bump();
 			/* We deliberately allow multiple secrete commands. */
 
@@ -177,10 +178,10 @@ bump_negot:
 
 	if (negotiation) {
 		negotiation = false;
-		agent.spawn();
+		agent->spawn();
 
 		std::stringstream s;
-		s << "agent_id " << agent.id << "\r\n";
+		s << "agent_id " << agent->id << "\r\n";
 		out_buf.append(s.str());
 	}
 

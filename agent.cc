@@ -131,7 +131,7 @@ agent::on_action_takes(void)
 		return;
 	}
 
-	conn->actions(*this);
+	conn->actions(this);
 }
 
 void

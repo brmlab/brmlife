@@ -28,7 +28,7 @@ public:
 	}
 
 	void senses(int tick_id, class agent &);
-	void actions(class agent &);
+	void actions(class agent *);
 
 	void cancel(void);
 
