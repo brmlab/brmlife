@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 #include <sys/select.h>
 #include <pthread.h>
@@ -9,6 +10,7 @@
 
 #include "agent.h"
 #include "connection.h"
+#include "main.h"
 
 #define buf_incomplete(buf) \
 	(buf.find("\r\n") == std::string::npos || (buf.find("\r\n") > 0 && buf.find("\r\n\r\n") == std::string::npos))
@@ -120,6 +122,28 @@ connection::actions(class agent &agent)
 			if (rate >= 0 && rate <= 1)
 				agent.attr.defense = rate;
 
+		} else if (negotiation && !cmd.compare("agent_id")) {
+			int id = -1;
+			sscanf(line.c_str(), "%d", &id);
+			if (id < 0) {
+bump_negot:
+				bump(); out_buf.append("\r\n");
+			} else {
+				class agent *a2 = NULL;
+				for (std::list<class agent *>::iterator ai = agents.begin(); ai != agents.end(); ai++) {
+					if ((*ai)->id == id) {
+						a2 = *ai;
+						break;
+					}
+				}
+				if (!a2 || a2->conn || !a2->tile || (dynamic_cast<herb *> (a2)))
+					goto bump_negot;
+				/* Round and round she goes, where she stops, nobody knows. */
+				a2->conn = this;
+				agent.conn = NULL;
+				negotiation = false;
+			}
+
 		} else if (!negotiation && !cmd.compare("move_dir") && !(mask & 1)) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
@@ -154,6 +178,10 @@ connection::actions(class agent &agent)
 	if (negotiation) {
 		negotiation = false;
 		agent.spawn();
+
+		std::stringstream s;
+		s << "agent_id " << agent.id << "\r\n";
+		out_buf.append(s.str());
 	}
 
 	pthread_mutex_unlock(&buf_lock);

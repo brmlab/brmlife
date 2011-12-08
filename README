@@ -20,6 +20,9 @@ CRLF ("\r\n"), not just LF ("\n")!
 
 The following inputs (in no particular order) are supported:
 
+	agent_id <id>
+		unique id of agent; may be sent only once at the beginning
+		(you can use it to reconnect to the same agent later)
 	tick <ticknum>
 	BUMP
 		if received, the agent's move failed
@@ -62,9 +65,10 @@ The following outputs are supported:
 		energy required is proportional to phintensity
 
 
-After connecting, the client specifies its desired attributes,
-in the same format as in normal output (line-based, terminated
-by empty line), but with these commands instead:
+When new agent connects, the client first enters the "negotiation"
+phase, specifying its desired attributes, in the same format as in
+normal output (line-based, terminated by empty line), but with
+these commands instead:
 
 	move <rate>
 		<rate> between 0 and 1, describing probability
@@ -76,3 +80,12 @@ by empty line), but with these commands instead:
 
 In general, higher rate means higher energy maintenance of the
 appropriate actuators.
+
+Alternately, the client may send a single command in the negotiation
+phase:
+
+	agent_id <id>
+
+If the id corresponds to a disconnected agent, the connection
+is immediately attached to that agent. Combining this with other
+negotiation commands is undefined.
