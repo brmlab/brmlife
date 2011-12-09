@@ -80,7 +80,7 @@ sub take_action($%) {
 		[0, -2], [1, -2], [2, -2], [2, -1], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2], [-1, 2], [-2, 2], [-2, 1], [-2, 0], [-2, -1], [-2, -2], [-1, -2],
 	);
 
-	my $max = $dirs[1];
+	my $max = $dirs[0];
 	# Default direction in case of nothing interesting in the vicinity
 	# is [1, -1].
 
@@ -116,7 +116,7 @@ sub take_action($%) {
 		}
 	}
 
-	print "moves ".join(", ", @move)." => ($max->[0],$max->[1])\n";
+	print "moves ".join(", ", @move)." => (".dirindex($max).":$max->[0],$max->[1])\n";
 
 	if ($attack[dirindex($max)]) {
 		print $socket "attack_dir $max->[0] $max->[1]\r\n";
