@@ -20,10 +20,17 @@ CRLF ("\r\n"), not just LF ("\n")!
 
 The following inputs (in no particular order) are supported:
 
+	agent_id <id>
+		unique id of agent; may be sent only once at the beginning
+		(you can use it to reconnect to the same agent later)
 	tick <ticknum>
 	BUMP
 		if received, the agent's move failed
 		(or attack of non-existent agent, etc.)
+	BRED <id> <father_info>
+		a new agent has been spawned, connect using agent_id <id>;
+		<father_info> is arbitrary string passed from the father,
+		can be used for genetic recombination
 	DEAD
 		if received, the agent is dead!
 	energy <points>
@@ -38,6 +45,13 @@ The following inputs (in no particular order) are supported:
 				 a dead agent
 				 A alive agent
 				 x herp
+	pheromones (<ph>,<ph>,<ph>,...) (<ph>...)...
+		(<ph>,...) describes set of pheromones on a tile,
+		in the same order as visual; if agent is on a tile,
+		its pheromones are merged with tile pheromones
+		<ph> format is <id>:<intensity>
+			<id>: pheromone id 0..65535
+			<intensity>: floating-point number
 
 The following outputs are supported:
 
@@ -47,11 +61,21 @@ The following outputs are supported:
 	attack_dir <x> <y>
 		<x> and <y> are integer offsets relative
 		to the current position; may be just {-1,0,1}
+	breed_dir <x> <y> <info>
+		<info> is arbitrary string passed to the "mother"
+		(to be passed to the child)
+	secrete <phid> <phintensity>
+		produce a pheromone; pheromones are initially
+		associated with an agent and trailed at tiles
+		visited by the agent; pheromones with lower id
+		transfer from agent to tile faster
+		energy required is proportional to phintensity
 
 
-After connecting, the client specifies its desired attributes,
-in the same format as in normal output (line-based, terminated
-by empty line), but with these commands instead:
+When new agent connects, the client first enters the "negotiation"
+phase, specifying its desired attributes, in the same format as in
+normal output (line-based, terminated by empty line), but with
+these commands instead:
 
 	move <rate>
 		<rate> between 0 and 1, describing probability
@@ -60,6 +84,20 @@ by empty line), but with these commands instead:
 		<rate> between 0 and 1.
 	defense <rate>
 		<rate> between 0 and 1.
+	breeding_key <value>
+		<value> is arbitrary integer number; default is 0;
+		breeding succeeds only between individuals with key
+		that is near enough (abs(key1-key2) < kappa).
 
 In general, higher rate means higher energy maintenance of the
 appropriate actuators.
+
+Alternately, the client may send a single command in the negotiation
+phase:
+
+	agent_id <id>
+
+If the id corresponds to a disconnected agent, the connection
+is immediately attached to that agent. Combining this with other
+negotiation commands is undefined, except for newborns - in that case,
+negotiation commands must follow after agent_id.

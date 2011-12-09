@@ -91,6 +91,62 @@ agent::attack_dir(int dir_x, int dir_y)
 	return attack_roll >= defense_roll;
 }
 
+bool
+agent::breed_dir(int dir_x, int dir_y, std::string info)
+{
+	if (dead || !tile)
+		return false;
+
+	class tile *t2 = &tile->tile_in_dir(dir_x, dir_y);
+	class agent *a = t2->agent;
+	if (!a || a->dead || !a->conn)
+		return false;
+
+	/* Self-breeding may not be a bad thing, but there is just
+	 * a technical problem with in/out buf locking. */
+	assert(a != this);
+
+	if (abs(a->attr.breeding_key - attr.breeding_key) > world::breeding_kappa)
+		return false;
+
+	chenergy(world::breed_out_cost);
+	a->chenergy(world::breed_in_cost);
+	if (a->dead)
+		return false;
+
+	/* Grab a tile. */
+	int spawn_dirs[][2] = {
+		{0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1},
+	};
+	int spawn_dir_n = sizeof(spawn_dirs) / sizeof(spawn_dirs[0]);
+	class tile *tb = NULL;
+	for (int i = 0; i < spawn_dir_n; i++) {
+		class tile *t = &tile->tile_in_dir(spawn_dirs[i][0], spawn_dirs[i][1]);
+		if (!t->agent) {
+			tb = t;
+			break;
+		}
+	}
+	if (!tb)
+		return false; // still-born
+
+	/* New agent, yay. */
+	class agent *ab = new class agent(agent_id++, NULL, map);
+	agents.push_back(ab);
+	ab->spawn_at(*tb);
+	a->conn->bred(ab->id, info);
+	return true;
+}
+
+bool
+agent::secrete(int id, double intensity)
+{
+	pheromone p(id, intensity);
+	pheromones.secrete(p);
+	chenergy(intensity * world::pheromone_cost);
+	return true;
+}
+
 void
 agent::chenergy(int delta)
 {
@@ -117,20 +173,23 @@ agent::on_action_takes(void)
 		return;
 
 	if (conn->error) {
-		if (!dead) die();
 		conn->cancel();
 		conn = NULL;
 		return;
 	}
 
-	conn->actions(*this);
+	conn->actions(this);
 }
 
 void
 agent::on_tick(void)
 {
+	pheromones.decay(world::phdecay_gamma, world::phdecay_delta);
+
 	if (!tile)
 		return;
+
+	pheromones.seep(tile->pheromones, world::phseep_alpha, world::phseep_beta);
 
 	if (!dead) {
 		chenergy(world::sun_energy);
@@ -168,6 +227,14 @@ agent::~agent()
 }
 
 
+void
+herb::die(void)
+{
+	/* No corpse, just clean up tile. */
+	tile->on_agent_leave(*this);
+	tile = NULL;
+}
+
 static void
 spawn_herb(class tile &t)
 {
@@ -176,6 +243,15 @@ spawn_herb(class tile &t)
 	class herb *h = new class herb(agent_id++, t.map);
 	agents.push_back(h);
 	h->spawn_at(t);
+}
+
+void
+herb::smell_herb(class tile &t)
+{
+	/* Herb pheromone ("smell") #32768. */
+	class pheromone p(32768, world::herb_phintensity);
+	t.pheromones.secrete(p);
+	chenergy(p.val * world::pheromone_cost);
 }
 
 void
@@ -189,7 +265,11 @@ herb::on_tick(void)
 		spawn_herb(tile->tile_in_dir(0, 1));
 		spawn_herb(tile->tile_in_dir(-1, 0));
 		spawn_herb(tile->tile_in_dir(0, -1));
-		tile->on_agent_leave(*this);
-		tile = NULL;
+		die();
+	} else {
+		smell_herb(tile->tile_in_dir(1, 0));
+		smell_herb(tile->tile_in_dir(0, 1));
+		smell_herb(tile->tile_in_dir(-1, 0));
+		smell_herb(tile->tile_in_dir(0, -1));
 	}
 }

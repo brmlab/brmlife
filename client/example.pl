@@ -120,6 +120,7 @@ sub take_action($$) {
 	} else {
 		print $socket "move_dir $max->[0] $max->[1]\r\n";
 	}
+	print $socket "secrete 65536 1\r\n";
 	print $socket "\r\n";
 }
 
@@ -139,9 +140,14 @@ $socket = IO::Socket::INET->new(
 print "[ii] connected\r\n";
 
 # negotiate attributs
-print $socket "move 1.0\r\n";
-print $socket "attack 1.0\r\n";
-print $socket "defense 1.0\r\n";
+if ($ARGV[1]) {
+	print "[ii] recovering agent $ARGV[1]\r\n";
+	print $socket "agent_id $ARGV[1]\r\n";
+} else {
+	print $socket "move 1.0\r\n";
+	print $socket "attack 1.0\r\n";
+	print $socket "defense 1.0\r\n";
+}
 print $socket "\r\n";
 print "[ii] agent created\r\n";
 

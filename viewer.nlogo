@@ -1,20 +1,21 @@
-globals [w h]
+globals [w h symbol herbs]
 to init
   clear-all;
   file-close-all;
   set w 0;
   set h 0;
-  
+  set herbs 0;
+  set symbol "";
   file-open "rawio_cfg";
   resize-world 0 ((read-from-string file-read-line) - 1) (1 - (read-from-string file-read-line)) 0;
   file-close-all
 end
-
+ 
 to go
   file-open "rawio_map";
   while [file-at-end? = false]
   [
-  let symbol file-read-characters 1;
+  set symbol file-read-characters 1;
   if (symbol = "\n" or symbol = "\r") and file-at-end? = false
   [
     set symbol file-read-characters 1;
@@ -24,20 +25,29 @@ to go
   if symbol = "x"
   [
     ask patch w h [set pcolor green ];
+    set herbs herbs + 1
   ]
   if symbol = "."
   [
-    ask patch w h [set pcolor black ]
+    ask patch w h [set pcolor black ];
+  ]
+  if member? symbol ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"]
+  [
+    ask patch w h [set pcolor red ];
   ]
   set w w + 1;
   ]
   file-close-all;
+  
+  set-current-plot "herbs";
+  set-current-plot-pen "herbs";
+  plot count patches with [pcolor = green];
+  
   tick;
   set w 0;
   set h 0;
   wait 1;
-end
-  
+end  
 @#$#@#$#@
 GRAPHICS-WINDOW
 111
@@ -96,6 +106,34 @@ NIL
 NIL
 NIL
 NIL
+
+PLOT
+91
+332
+291
+482
+herbs
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+PENS
+"herbs" 1.0 0 -16777216 true
+
+MONITOR
+17
+411
+74
+456
+herbs
+count patches with [pcolor = green]
+17
+1
+11
 
 @#$#@#$#@
 WHAT IS IT?
