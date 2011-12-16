@@ -36,7 +36,7 @@ public:
 		double move;
 		double attack;
 		double defense;
-		long breeding_key;
+		long breeding_key1, breeding_key2;
 	} attr;
 
 	int energy;
@@ -50,7 +50,7 @@ public:
 		attr.move = 1.0;
 		attr.attack = 0.5;
 		attr.defense = 0.5;
-		attr.breeding_key = 0;
+		attr.breeding_key1 = attr.breeding_key2 = 0;
 		energy = world::newborn_energy;
 		dead = false;
 	};

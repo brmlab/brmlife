@@ -131,8 +131,10 @@ connection::actions(class agent *agent)
 			sscanf(line.c_str(), "%lf", &rate);
 			if (rate >= 0 && rate <= 1)
 				agent->attr.defense = rate;
-		} else if (negotiation && !cmd.compare("breeding_key")) {
-			sscanf(line.c_str(), "%ld", &agent->attr.breeding_key);
+		} else if (negotiation && !cmd.compare("breeding_key1")) {
+			sscanf(line.c_str(), "%ld", &agent->attr.breeding_key1);
+		} else if (negotiation && !cmd.compare("breeding_key2")) {
+			sscanf(line.c_str(), "%ld", &agent->attr.breeding_key2);
 
 		} else if (negotiation && !cmd.compare("agent_id")) {
 			int id = -1;

@@ -84,10 +84,14 @@ these commands instead:
 		<rate> between 0 and 1.
 	defense <rate>
 		<rate> between 0 and 1.
-	breeding_key <value>
+	breeding_key1 <value>
+	breeding_key2 <value>
 		<value> is arbitrary integer number; default is 0;
 		breeding succeeds only between individuals with key
 		that is near enough (abs(key1-key2) < kappa).
+		key1 is used as the initiator's key, key2 as the
+		receiver's key. (I.e., use different keys for
+		sexually reproducing species.)
 
 In general, higher rate means higher energy maintenance of the
 appropriate actuators.

@@ -106,7 +106,7 @@ agent::breed_dir(int dir_x, int dir_y, std::string info)
 	 * a technical problem with in/out buf locking. */
 	assert(a != this);
 
-	if (abs(a->attr.breeding_key - attr.breeding_key) > world::breeding_kappa)
+	if (abs(attr.breeding_key1 - a->attr.breeding_key2) > world::breeding_kappa)
 		return false;
 
 	chenergy(world::breed_out_cost);
