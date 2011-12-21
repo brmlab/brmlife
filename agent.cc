@@ -66,7 +66,7 @@ agent::move_dir(int dir_x, int dir_y)
 }
 
 bool
-agent::attack_dir(int dir_x, int dir_y)
+agent::attack_dir(int dir_x, int dir_y, int force)
 {
 	if (dead || !tile)
 		return false;
@@ -76,8 +76,8 @@ agent::attack_dir(int dir_x, int dir_y)
 		return false;
 
 	class agent *a = t2->agent;
-	chenergy(world::attack_cost);
-	a->chenergy(world::defense_cost);
+	chenergy(-force);
+	a->chenergy(-force * world::defense_const_factor);
 	if (dead || a->dead)
 		return true;
 
@@ -86,9 +86,10 @@ agent::attack_dir(int dir_x, int dir_y)
 	int attack_roll = random() % attack_dice;
 	int defense_dice = round(a->attr.defense * a->energy);
 	int defense_roll = random() % defense_dice;
-	if (attack_roll > defense_roll)
-		a->chenergy(defense_roll - attack_roll);
-	return attack_roll >= defense_roll;
+	if (attack_roll > defense_roll) {
+		a->chenergy(-force);
+	}
+	return attack_roll > defense_roll;
 }
 
 bool

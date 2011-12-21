@@ -58,7 +58,7 @@ public:
 	void spawn_at(class tile &tile);
 
 	bool move_dir(int dir_x, int dir_y);
-	bool attack_dir(int dir_x, int dir_y);
+	bool attack_dir(int dir_x, int dir_y, int force);
 	bool breed_dir(int dir_x, int dir_y, std::string info);
 	bool secrete(int id, double intensity);
 

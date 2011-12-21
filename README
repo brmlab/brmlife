@@ -57,10 +57,11 @@ The following outputs are supported:
 
 	move_dir <x> <y>
 		<x> and <y> are integer offsets relative
-		to the current position; may be just {-1,0,1}
-	attack_dir <x> <y>
+		to the current position, may be just {-1,0,1}
+	attack_dir <x> <y> <force>
 		<x> and <y> are integer offsets relative
-		to the current position; may be just {-1,0,1}
+		to the current position, may be just {-1,0,1};
+		<force> is invested energy, damage is proportional
 	breed_dir <x> <y> <info>
 		<info> is arbitrary string passed to the "mother"
 		(to be passed to the child)
@@ -105,3 +106,6 @@ If the id corresponds to a disconnected agent, the connection
 is immediately attached to that agent. Combining this with other
 negotiation commands is undefined, except for newborns - in that case,
 negotiation commands must follow after agent_id.
+
+TODO proto. change:
+	tickid for input

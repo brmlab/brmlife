@@ -168,11 +168,12 @@ bump_negot:
 				bump();
 			mask |= 1;
 		} else if (!negotiation && !cmd.compare("attack_dir") && !(mask & 2)) {
-			int x = 0, y = 0;
-			sscanf(line.c_str(), "%d %d", &x, &y);
+			int x = 0, y = 0, force = 0;
+			sscanf(line.c_str(), "%d %d %d", &x, &y, &force);
 			if (x < -1) x = -1; if (x > 1) x = 1;
 			if (y < -1) y = -1; if (y > 1) y = 1;
-			if (!agent->attack_dir(x, y))
+			if (force < 1) force = 1;
+			if (!agent->attack_dir(x, y, force))
 				bump();
 			mask |= 2;
 		} else if (!negotiation && !cmd.compare("breed_dir") && !(mask & 4)) {
