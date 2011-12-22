@@ -6,7 +6,7 @@ In each tick, the server sends sensor input to the agent.
 Until the next tick, the client may supply actions to take
 to the server.
 
-Both server input and client output follow the same format:
+Server input follows the format:
 
 	cmd1 <par1> <par2>...
 	cmd2 <par1> <par2>...
@@ -52,6 +52,16 @@ The following inputs (in no particular order) are supported:
 		<ph> format is <id>:<intensity>
 			<id>: pheromone id 0..65535
 			<intensity>: floating-point number
+
+Client output follows a slightly different format:
+
+	<tickid> cmd1 <par1> <par2>...
+	<tickid> cmd2 <par1> <par2>...
+	...
+
+Only commands with a matching tickid are processed; in case a command
+is delayed, causing late relaying to the server and processing in the
+future, it is silently dropped and ignored.
 
 The following outputs are supported:
 
@@ -106,6 +116,3 @@ If the id corresponds to a disconnected agent, the connection
 is immediately attached to that agent. Combining this with other
 negotiation commands is undefined, except for newborns - in that case,
 negotiation commands must follow after agent_id.
-
-TODO proto. change:
-	tickid for input

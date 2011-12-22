@@ -179,7 +179,7 @@ agent::on_action_takes(void)
 		return;
 	}
 
-	conn->actions(this);
+	conn->actions(tick_id, this);
 }
 
 void

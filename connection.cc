@@ -6,6 +6,8 @@
 
 #include <sys/select.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "agent.h"
@@ -97,22 +99,31 @@ connection::bump(void)
 }
 
 void
-connection::actions(class agent *agent)
+connection::actions(int tick_id, class agent *agent)
 {
 	pthread_mutex_lock(&buf_lock);
-	if (buf_incomplete(in_buf)) {
+	if (in_buf.find("\r\n") == std::string::npos) {
 		/* Not enough data, needs to wait until next turn, sorry. */
 		pthread_mutex_unlock(&buf_lock);
 		return;
 	}
 
 	int mask = 0;
-	while (in_buf.c_str()[0] != '\r') {
+	while (in_buf.find("\r\n") != std::string::npos) {
 		int nlofs = in_buf.find("\r\n");
 		std::string line = in_buf.substr(0, nlofs);
 		in_buf.erase(0, nlofs + 2);
 
 		int spofs = line.find(' ');
+		std::string cmd_tick_id = line.substr(0, spofs);
+		line.erase(0, spofs + 1);
+
+		if (atol(cmd_tick_id.c_str()) != tick_id - 1) {
+			/* Out of sync command, ignore and continue. */
+			continue;
+		}
+
+		spofs = line.find(' ');
 		std::string cmd = line.substr(0, spofs);
 		line.erase(0, spofs + 1);
 
@@ -282,13 +293,9 @@ connection::thread_loop(void)
 				break;
 
 			} else {
-				bool want_moar = false;
 				pthread_mutex_lock(&buf_lock);
 				in_buf += std::string(cbuf, len);
-				want_moar = buf_incomplete(in_buf);
 				pthread_mutex_unlock(&buf_lock);
-				if (!want_moar)
-					break;
 			}
 		}
 

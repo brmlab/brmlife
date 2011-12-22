@@ -29,7 +29,7 @@ public:
 
 	void senses(int tick_id, class agent &);
 	void bred(int agent_id, std::string &info);
-	void actions(class agent *);
+	void actions(int tick_id, class agent *);
 
 	void cancel(void);
 
