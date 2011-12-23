@@ -21,7 +21,7 @@ $/ = "\r\n";
 # The example agent does most of its decision making in the
 # take_action() subroutine. Its policy is to (in this order):
 #
-# * Attack any other agents encountered.
+# * Attack any other agents encountered (unless low on energy).
 # * Eat flowers if in immediate vicinity.
 # * Roam around semi-aimlessly, trying to look for food.
 #
@@ -124,6 +124,9 @@ sub take_action($$) {
 	# Default direction in case of nothing interesting in the vicinity
 	# is [1, -1].
 
+	# In the case of shortage of resources, prefer fleeing to fighting.
+	my $flee = ($state->{energy} < 10000);
+
 	# Examine our neighborhood and adjust preference for each direction
 	# based on what we sense.
 	for my $i (0..$#{$state->{visual}}) {
@@ -148,8 +151,12 @@ sub take_action($$) {
 
 		if ($agent eq 'A') {
 			# Agent
-			$move[dirindex($dir)] += 7;
-			$attack[dirindex($dir)] += 1;
+			if (not $flee) {
+				$move[dirindex($dir)] += 7;
+				$attack[dirindex($dir)] += 1;
+			} else {
+				$move[dirindex($dir)] -= 7;
+			}
 		}
 
 		if ($move[dirindex($dir)] > $move[dirindex($max)] or
