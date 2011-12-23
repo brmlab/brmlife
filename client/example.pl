@@ -170,7 +170,7 @@ sub take_action($$) {
 
 	# Execute actions!
 	if ($attack[dirindex($max)]) {
-		print $socket $state->{tick}." attack_dir $max->[0] $max->[1] 100\r\n";
+		print $socket $state->{tick}." attack_dir $max->[0] $max->[1] ".($state->{energy}/5)."\r\n";
 	} else {
 		print $socket $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
 	}
