@@ -137,7 +137,7 @@ sub take_action($$) {
 	}
 	# We unconditionally secrete this pheromone for identification
 	# by others of our kin.
-	print $socket "secrete 65536 1\r\n";
+	print $socket $state->{tick}." secrete 65536 1\r\n";
 	print $socket "\r\n";
 }
 
