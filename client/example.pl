@@ -18,6 +18,17 @@ use warnings;
 $/ = "\r\n";
 
 
+# The example agent uses $state to hold its state structure. It is
+# a HASHREF with the following fields:
+# {
+# 	tick => NUMBER (current tick id)
+# 	energy => NUMBER (current energy)
+# 	visual => [
+# 		CHAR[2], ...
+# 	] (type-agent character pairs for perceived tiles)
+# }
+
+
 # Read server input associated with a single tick and update the state
 # structure accordingly.
 sub tick($$) {
