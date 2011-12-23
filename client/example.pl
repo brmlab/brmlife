@@ -18,6 +18,15 @@ use warnings;
 $/ = "\r\n";
 
 
+# The example agent does most of its decision making in the
+# take_action() subroutine. Its policy is to (in this order):
+#
+# * Attack any other agents encountered.
+# * Eat flowers if in immediate vicinity.
+# * Roam around semi-aimlessly, trying to look for food.
+#
+# This agent can be identified based on pheromone #65536.
+
 # The example agent uses $state to hold its state structure. It is
 # a HASHREF with the following fields:
 # {
