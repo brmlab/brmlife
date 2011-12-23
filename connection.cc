@@ -28,7 +28,7 @@ connection::senses(int tick_id, class agent &a)
 	};
 	int dir_n = sizeof(dirs) / sizeof(dirs[0]);
 
-	char buf[1024];
+	char buf[65536];
 	char *bufp = buf;
 	bufp += snprintf(bufp, sizeof(buf) - (bufp - buf), "tick %d\r\n", tick_id);
 	if (a.dead)
