@@ -26,6 +26,9 @@ $/ = "\r\n";
 # 	visual => [
 # 		CHAR[2], ...
 # 	] (type-agent character pairs for perceived tiles)
+# 	pheromones => [
+# 		{ PHID => VALUE, ... }, ...
+# 	] (pheromone spectrum for perceived tiles)
 # }
 
 
@@ -64,6 +67,15 @@ sub tick($$) {
 		} elsif ($type eq 'visual') {
 			$value =~ /^([^ ][^ ] )+([^ ][^ ])$/ or die "[ee] type visual wrong value ($value)\n";
 			$state->{visual} = [ split(" ", $value) ];
+
+		} elsif ($type eq 'pheromones') {
+			$value =~ /^(\((\d+:[0-9.]+,?)*\) ?)+$/ or die "[ee] type pheromones wrong value ($value)\n";
+			# Best to read the following from the outside inwards:
+			$state->{pheromones} = [
+				map { {
+					map { split(":", $_) } split(",", $_)
+				} } map { y/()//d; $_ } split(" ", $value)
+			];
 		}
 	}
 }
@@ -191,7 +203,18 @@ while (1) {
 	tick($socket, $state);
 	# Debug print
 	print $state->{energy} . "\n";
-	print "[", join('], [', @{$state->{visual}}), "]\n";
+	print "visual [", join('], [', @{$state->{visual}}), "]\n";
+	# The following could be written more succintly, but it is here
+	# to show possible iteration over pheromones:
+	print "pherom ";
+	for my $i (0..$#{$state->{pheromones}}) {
+		print "[";
+		for my $pi (keys %{$state->{pheromones}->[$i]}) {
+			print "$pi=>".$state->{pheromones}->[$i]->{$pi}." ";
+		}
+		print "] ";
+	}
+	print "\n";
 
 	take_action($socket, $state);
 }
