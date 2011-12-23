@@ -1,27 +1,31 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 #
-# Example brmlife client.
-# Partially based on the btraptor.
+# Example brmlife client (originally based on the btraptor).
+#
+# This client is meant only as an example of implementation of all
+# the main features without sophisticated architecture or decision
+# making strategies.
+#
+# Usage: example.pl [PORT [AGENTID]]
 #
 # To run e.g. 15 instances of this client, run this command inside screen:
-#
 #	for i in `seq 1 15`; do screen ./example.pl; done
 
 use strict;
 use warnings;
 
-use Switch;
-use IO::Socket;
-
+# Socket communication should use CR-LF line endings, not just LF.
 $/ = "\r\n";
 
+
+# Read server input associated with a single tick and update the state
+# structure accordingly.
 sub tick($$) {
 	my ($socket, $state) = @_;
 
-	# read message from socket and parse it
 	my $line = '';
 	print "\n";
-	while ( chomp($line = <$socket>) ) {
+	while (chomp($line = <$socket>)) {
 		print "# $line\n";
 		last if $line eq '';
 		if ($line eq 'DEAD')  {
@@ -53,6 +57,7 @@ sub tick($$) {
 	}
 }
 
+# Execute an appropriate action based on the current agent state.
 sub take_action($$) {
 	my ($socket, $state) = @_;
 
@@ -65,8 +70,14 @@ sub take_action($$) {
 
 	# Move/attack desires for each direction.
 	# We prefer moves in the diagonal direction.
-	my @move = ((1, 0, 1), (0, 0, 0), (1, 0, 1));
-	my @attack = ((0, 0, 0), (0, 0, 0), (0, 0, 0));
+	my @move = (
+		(1, 0, 1),
+		(0, 0, 0),
+		(1, 0, 1));
+	my @attack = (
+		(0, 0, 0),
+		(0, 0, 0),
+		(0, 0, 0));
 
 	# dirindex($x) returns @move, @attack index for given @dirs item.
 	sub dirindex { my ($dir) = @_; $dir->[0]+1 + 3*($dir->[1]+1) }
@@ -81,6 +92,8 @@ sub take_action($$) {
 	# Default direction in case of nothing interesting in the vicinity
 	# is [1, -1].
 
+	# Examine our neighborhood and adjust preference for each direction
+	# based on what we sense.
 	for my $i (0..$#{$state->{visual}}) {
 		my ($type, $agent) = split(//, $state->{visual}->[$i]);
 		my $dir = $vdirs[$i];
@@ -113,24 +126,30 @@ sub take_action($$) {
 		}
 	}
 
+	# Debug print
 	print "moves ".join(", ", @move)." => (".dirindex($max).":$max->[0],$max->[1])\n";
 
+	# Execute actions!
 	if ($attack[dirindex($max)]) {
 		print $socket $state->{tick}." attack_dir $max->[0] $max->[1] 100\r\n";
 	} else {
 		print $socket $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
 	}
+	# We unconditionally secrete this pheromone for identification
+	# by others of our kin.
 	print $socket "secrete 65536 1\r\n";
 	print $socket "\r\n";
 }
 
 
-# connect
+# Connect
+
 my ($remote_host, $remote_port, $socket);
 $remote_host = "localhost";
 $remote_port = $ARGV[0];
 $remote_port ||= 27753;
 
+use IO::Socket;
 $socket = IO::Socket::INET->new(
     PeerAddr => $remote_host,
     PeerPort => $remote_port,
@@ -139,7 +158,9 @@ $socket = IO::Socket::INET->new(
 ) or die "Couldn't connect to $remote_host:$remote_port : $@\n";
 print "[ii] connected\r\n";
 
-# negotiate attributs
+
+# Negotiate attributs
+
 if ($ARGV[1]) {
 	print "[ii] recovering agent $ARGV[1]\r\n";
 	print $socket "agent_id $ARGV[1]\r\n";
@@ -151,9 +172,13 @@ if ($ARGV[1]) {
 print $socket "\r\n";
 print "[ii] agent created\r\n";
 
+
+# Start tick loop
+
 my $state = {};
 while (1) {
 	tick($socket, $state);
+	# Debug print
 	print $state->{energy} . "\n";
 	print "[", join('], [', @{$state->{visual}}), "]\n";
 
