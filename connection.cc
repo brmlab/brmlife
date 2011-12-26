@@ -157,6 +157,7 @@ connection::actions(int tick_id, class agent *agent)
 			if (id < 0) {
 bump_negot:
 				bump(); out_buf.append("\r\n");
+				close(fd);
 			} else {
 				class agent *a2 = NULL;
 				for (std::list<class agent *>::iterator ai = agents.begin(); ai != agents.end(); ai++) {
