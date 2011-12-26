@@ -6,10 +6,17 @@
 # the main features without sophisticated architecture or decision
 # making strategies.
 #
-# Usage: example.pl [PORT [AGENTID]]
+# Usage: example.pl [PORT [AGENTID [GENDER]]]
 #
-# To run e.g. 15 instances of this client, run this command inside screen:
-#	for i in `seq 1 15`; do screen ./example.pl; done
+# AGENTID may be prefixed with + to indicate newly bred agent.
+#
+# GENDER may be 0 for no breeding, 1 for "male" (active) or 2 for
+# "female" (passive); default is 0; breeding requires the script
+# to be run in screen.
+#
+# To run e.g. 20 instances of this client with breeding enabled,
+# start screen and from within run:
+#	for i in `seq 1 10`; do screen ./example.pl 27753 0 1; screen ./example.pl 27753 0 2; done
 
 use strict;
 use warnings;
@@ -17,15 +24,19 @@ use warnings;
 # Socket communication should use CR-LF line endings, not just LF.
 $/ = "\r\n";
 
+my $remote_port;
+
 
 # The example agent does most of its decision making in the
 # take_action() subroutine. Its policy is to (in this order):
 #
+# * Breed with encountered matching agents (unless low on energy).
 # * Attack any other agents encountered (unless low on energy).
 # * Eat flowers if in immediate vicinity.
 # * Roam around semi-aimlessly, trying to look for food.
 #
 # This agent can be identified based on pheromone #65536.
+# Males furthermore secrete pheromone #65535, females #65534.
 
 # The example agent uses $state to hold its state structure. It is
 # a HASHREF with the following fields:
@@ -38,6 +49,8 @@ $/ = "\r\n";
 # 	pheromones => [
 # 		{ PHID => VALUE, ... }, ...
 # 	] (pheromone spectrum for perceived tiles)
+#
+#	gender => NUMBER (same as GENDER parameter)
 # }
 
 
@@ -65,7 +78,13 @@ sub tick($$) {
 		$line =~ m/^([^ ]+) (.*)$/;
 		my ($type, $value) = ($1, $2);
 
-		if ($type eq 'tick') {
+		if ($type eq 'BRED') {
+			my ($id, $father_info) = ($value =~ m/^([^ ]+)(?: (.*))?$/);
+			my $g = 1 + int rand(2);
+			print "[ii] bred $id ($g)\n";
+			system("screen ./$0 $remote_port $id $g");
+
+		} elsif ($type eq 'tick') {
 			$value =~ /^\d+$/ or die "[ee] type tick wrong value ($value)\n";
 			$state->{tick} =  $value;
 
@@ -106,10 +125,8 @@ sub take_action($$) {
 		(1, 0, 1),
 		(0, 0, 0),
 		(1, 0, 1));
-	my @attack = (
-		(0, 0, 0),
-		(0, 0, 0),
-		(0, 0, 0));
+	my @attack = ( (0, 0, 0), (0, 0, 0), (0, 0, 0));
+	my @breed = ( (0, 0, 0), (0, 0, 0), (0, 0, 0));
 
 	# dirindex($x) returns @move, @attack index for given @dirs item.
 	sub dirindex { my ($dir) = @_; $dir->[0]+1 + 3*($dir->[1]+1) }
@@ -131,6 +148,7 @@ sub take_action($$) {
 	# based on what we sense.
 	for my $i (0..$#{$state->{visual}}) {
 		my ($type, $agent) = split(//, $state->{visual}->[$i]);
+		my $ph = $state->{pheromones}->[$i];
 		my $dir = $vdirs[$i];
 
 		if (abs($dir->[0]) > 1 or abs($dir->[1]) > 1) {
@@ -151,7 +169,11 @@ sub take_action($$) {
 
 		if ($agent eq 'A') {
 			# Agent
-			if (not $flee) {
+			my $breeding_target = ($state->{gender} == 1 and $ph->{65534} and $ph->{65534} > 1);
+			if ($breeding_target) {
+				$move[dirindex($dir)] += 6;
+				$breed[dirindex($dir)] += 1;
+			} elsif (not $flee) {
 				$move[dirindex($dir)] += 7;
 				$attack[dirindex($dir)] += 1;
 			} else {
@@ -171,19 +193,32 @@ sub take_action($$) {
 	# Execute actions!
 	if ($attack[dirindex($max)]) {
 		print $socket $state->{tick}." attack_dir $max->[0] $max->[1] ".($state->{energy}/5)."\r\n";
+		print $state->{tick}." attack_dir $max->[0] $max->[1] ".($state->{energy}/5)."\r\n";
+	} elsif ($breed[dirindex($max)]) {
+		print $socket $state->{tick}." breed_dir $max->[0] $max->[1]\r\n";
+		print $state->{tick}." breed_dir $max->[0] $max->[1]\r\n";
 	} else {
 		print $socket $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
+		print $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
 	}
 	# We unconditionally secrete this pheromone for identification
 	# by others of our kin.
 	print $socket $state->{tick}." secrete 65536 1\r\n";
+	print $state->{tick}." secrete 65536 1\r\n";
+	if ($state->{gender} == 1) {
+		print $socket $state->{tick}." secrete 65535 1\r\n";
+		print $state->{tick}." secrete 65535 1\r\n";
+	} elsif ($state->{gender} == 2) {
+		print $socket $state->{tick}." secrete 65534 1\r\n";
+		print $state->{tick}." secrete 65534 1\r\n";
+	}
 	print $socket "\r\n";
 }
 
 
 # Connect
 
-my ($remote_host, $remote_port, $socket);
+my ($remote_host, $socket);
 $remote_host = "localhost";
 $remote_port = $ARGV[0];
 $remote_port ||= 27753;
@@ -198,16 +233,35 @@ $socket = IO::Socket::INET->new(
 print "[ii] connected\r\n";
 
 
-# Negotiate attributs
+# Parse parameters
 
-if ($ARGV[1]) {
+my $agentid = $ARGV[1];
+$agentid ||= 0;
+my $bred = $agentid =~ s/^\+//;
+my $gender = $ARGV[2];
+$gender ||= 0;
+
+
+# Negotiate attributes
+
+if ($agentid) {
 	print "[ii] recovering agent $ARGV[1]\r\n";
 	print $socket "agent_id $ARGV[1]\r\n";
-} else {
+}
+
+if ($bred or not $agentid) {
 	# Agent attributes - the default values:
 	print $socket "move 1.0\r\n";
 	print $socket "attack 0.5\r\n";
 	print $socket "defense 0.5\r\n";
+	my $base_key = 10838479;
+	if ($gender == 1) {
+		print $socket "breeding_key1 $base_key\r\n";
+		print $socket "breeding_key2 -$base_key\r\n";
+	} else {
+		print $socket "breeding_key1 -$base_key\r\n";
+		print $socket "breeding_key2 $base_key\r\n";
+	}
 }
 print $socket "\r\n";
 print "[ii] agent created\r\n";
@@ -215,7 +269,7 @@ print "[ii] agent created\r\n";
 
 # Start tick loop
 
-my $state = {};
+my $state = { gender => $gender };
 while (1) {
 	tick($socket, $state);
 	# Debug print
