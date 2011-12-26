@@ -239,7 +239,6 @@ sub take_action($$) {
 		print $socket $state->{tick}." secrete 65533 1\r\n";
 		print $state->{tick}." secrete 65533 1\r\n";
 	}
-	print $socket "\r\n";
 }
 
 
