@@ -4,7 +4,7 @@
 #
 # This client is meant only as an example of implementation of all
 # the main features without sophisticated architecture or decision
-# making strategies.
+# making strategies. It should have some basic sustainability, though.
 #
 # Usage: example.pl [PORT [AGENTID [GENDER]]]
 #
@@ -159,12 +159,20 @@ sub take_action($$) {
 
 		if ($agent eq 'x') {
 			# Herp
-			$move[dirindex($dir)] += 2;
+			if ($state->{energy} < 18000) {
+				$move[dirindex($dir)] += 2;
+			} else {
+				$move[dirindex($dir)] -= 2;
+			}
 		}
 
 		if ($agent eq 'a') {
 			# Corpse
-			$move[dirindex($dir)] += 4;
+			if ($state->{energy} < 17000) {
+				$move[dirindex($dir)] += 4;
+			} else {
+				$move[dirindex($dir)] -= 4;
+			}
 		}
 
 		if ($agent eq 'A') {
