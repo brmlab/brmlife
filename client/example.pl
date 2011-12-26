@@ -31,7 +31,8 @@ my $remote_port;
 # take_action() subroutine. Its policy is to (in this order):
 #
 # * Breed with encountered matching agents (unless low on energy).
-# * Attack any other agents encountered (unless low on energy).
+# * Attack any other agents encountered (unless low on energy
+#   or just bred - likely to attack newborns).
 # * Eat flowers if in immediate vicinity.
 # * Roam around semi-aimlessly, trying to look for food.
 #
@@ -52,6 +53,7 @@ my $remote_port;
 # 	] (pheromone spectrum for perceived tiles)
 #
 #	gender => NUMBER (same as GENDER parameter)
+#	last_bred => TICKNUMBER (when last bred new agents)
 # }
 
 
@@ -83,7 +85,10 @@ sub tick($$) {
 			my ($id, $father_info) = ($value =~ m/^([^ ]+)(?: (.*))?$/);
 			my $g = 1 + int rand(2);
 			print "[ii] bred $id ($g)\n";
+			#open LOG, ">>bred.log"; print LOG "$state->{agent_id} -> $id ($g)\n"; close LOG;
+			#system("screen sh -c './$0 $remote_port $id $g; read x'");
 			system("screen ./$0 $remote_port $id $g");
+			$state->{last_bred} = $value;
 
 		} elsif ($type eq 'agent_id') {
 			$value =~ /^\d+$/ or die "[ee] type agent_id wrong value ($value)\n";
@@ -147,7 +152,9 @@ sub take_action($$) {
 	# is [1, -1].
 
 	# In the case of shortage of resources, prefer fleeing to fighting.
-	my $flee = ($state->{energy} < 10000);
+	# Also, do not fight when we were just trying to breed - this is
+	# poor man's way to avoid killing our newborns.
+	my $flee = ($state->{energy} < 10000 or $state->{tick} - $state->{last_bred} < 5);
 
 	# Examine our neighborhood and adjust preference for each direction
 	# based on what we sense.
@@ -210,12 +217,13 @@ sub take_action($$) {
 	print "moves ".join(", ", @move)." => (".dirindex($max).":$max->[0],$max->[1])\n";
 
 	# Execute actions!
-	if ($attack[dirindex($max)]) {
+	if ($attack[dirindex($max)] > 0) {
 		print $socket $state->{tick}." attack_dir $max->[0] $max->[1] ".($state->{energy}/5)."\r\n";
 		print $state->{tick}." attack_dir $max->[0] $max->[1] ".($state->{energy}/5)."\r\n";
-	} elsif ($breed[dirindex($max)]) {
+	} elsif ($breed[dirindex($max)] > 0) {
 		print $socket $state->{tick}." breed_dir $max->[0] $max->[1]\r\n";
 		print $state->{tick}." breed_dir $max->[0] $max->[1]\r\n";
+		$state->{last_bred} = $state->{tick};
 	} else {
 		print $socket $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
 		print $state->{tick}." move_dir $max->[0] $max->[1]\r\n";
@@ -288,7 +296,7 @@ print "[ii] agent created\r\n";
 
 # Start tick loop
 
-my $state = { gender => $gender };
+my $state = { gender => $gender, last_bred => 0 };
 while (1) {
 	tick($socket, $state);
 	# Debug print
