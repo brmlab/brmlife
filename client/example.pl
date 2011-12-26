@@ -41,6 +41,7 @@ my $remote_port;
 # The example agent uses $state to hold its state structure. It is
 # a HASHREF with the following fields:
 # {
+# 	agent_id => NUMBER (agent id)
 # 	tick => NUMBER (current tick id)
 # 	energy => NUMBER (current energy)
 # 	visual => [
@@ -83,6 +84,10 @@ sub tick($$) {
 			my $g = 1 + int rand(2);
 			print "[ii] bred $id ($g)\n";
 			system("screen ./$0 $remote_port $id $g");
+
+		} elsif ($type eq 'agent_id') {
+			$value =~ /^\d+$/ or die "[ee] type agent_id wrong value ($value)\n";
+			$state->{agent_id} = $value;
 
 		} elsif ($type eq 'tick') {
 			$value =~ /^\d+$/ or die "[ee] type tick wrong value ($value)\n";
@@ -287,7 +292,7 @@ my $state = { gender => $gender };
 while (1) {
 	tick($socket, $state);
 	# Debug print
-	print $state->{energy} . "\n";
+	print $state->{agent_id} . " " .$state->{energy} . "\n";
 	print "visual [", join('], [', @{$state->{visual}}), "]\n";
 	# The following could be written more succintly, but it is here
 	# to show possible iteration over pheromones:
