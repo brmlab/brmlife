@@ -173,6 +173,15 @@ bump_negot:
 				negotiation = agent->newborn;
 			}
 
+		} else if (negotiation && !cmd.compare("")) {
+			agent->newborn = negotiation = false;
+			if (!agent->tile)
+				agent->spawn();
+
+			std::stringstream s;
+			s << "agent_id " << agent->id << "\r\n";
+			out_buf.append(s.str());
+
 		} else if (!negotiation && !cmd.compare("move_dir") && !(mask & 1)) {
 			int x = 0, y = 0;
 			sscanf(line.c_str(), "%d %d", &x, &y);
@@ -213,16 +222,6 @@ bump_negot:
 		}
 	}
 	in_buf.erase(0, 2);
-
-	if (negotiation) {
-		agent->newborn = negotiation = false;
-		if (!agent->tile)
-			agent->spawn();
-
-		std::stringstream s;
-		s << "agent_id " << agent->id << "\r\n";
-		out_buf.append(s.str());
-	}
 
 	pthread_mutex_unlock(&buf_lock);
 }
