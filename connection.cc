@@ -122,6 +122,7 @@ connection::actions(int tick_id, class agent *agent)
 
 			if (atol(cmd_tick_id.c_str()) != tick_id - 1) {
 				/* Out of sync command, ignore and continue. */
+				std::cout << "agent " << agent->id << " out of sync (tick " << cmd_tick_id << " .. " << line << ") ...\n";
 				continue;
 			}
 		}

@@ -170,8 +170,11 @@ agent::die(void)
 void
 agent::on_action_takes(void)
 {
-	if (!conn)
+	if (!conn) {
+		if (tile && !dead && !(dynamic_cast<herb *> (this)))
+			std::cout << "agent " << id << " not connected ...\n";
 		return;
+	}
 
 	if (conn->error) {
 		conn->cancel();
