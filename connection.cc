@@ -113,14 +113,17 @@ connection::actions(int tick_id, class agent *agent)
 		int nlofs = in_buf.find("\r\n");
 		std::string line = in_buf.substr(0, nlofs);
 		in_buf.erase(0, nlofs + 2);
+		int spofs;
 
-		int spofs = line.find(' ');
-		std::string cmd_tick_id = line.substr(0, spofs);
-		line.erase(0, spofs + 1);
+		if (!negotiation) {
+			spofs = line.find(' ');
+			std::string cmd_tick_id = line.substr(0, spofs);
+			line.erase(0, spofs + 1);
 
-		if (atol(cmd_tick_id.c_str()) != tick_id - 1) {
-			/* Out of sync command, ignore and continue. */
-			continue;
+			if (atol(cmd_tick_id.c_str()) != tick_id - 1) {
+				/* Out of sync command, ignore and continue. */
+				continue;
+			}
 		}
 
 		spofs = line.find(' ');
