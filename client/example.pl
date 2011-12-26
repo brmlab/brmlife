@@ -35,8 +35,8 @@ my $remote_port;
 # * Eat flowers if in immediate vicinity.
 # * Roam around semi-aimlessly, trying to look for food.
 #
-# This agent can be identified based on pheromone #65536.
-# Males furthermore secrete pheromone #65535, females #65534.
+# This agent can be identified based on pheromone #65535.
+# Males furthermore secrete pheromone #65534, females #65533.
 
 # The example agent uses $state to hold its state structure. It is
 # a HASHREF with the following fields:
@@ -177,7 +177,13 @@ sub take_action($$) {
 
 		if ($agent eq 'A') {
 			# Agent
-			my $breeding_target = ($state->{gender} == 1 and $ph->{65534} and $ph->{65534} > 1);
+			# For breeding, we need to be sure we are breeding
+			# with female agent, which is a bit tricky.
+			my $breeding_target = ($state->{gender} == 1
+				and defined $ph->{65533}
+				and $ph->{65533} > 5
+				and (not defined $ph->{65534} or $ph->{65533} > $ph->{65534})
+				and $ph->{65535} / $ph->{65533} < 1.5);
 			if ($breeding_target) {
 				$move[dirindex($dir)] += 6;
 				$breed[dirindex($dir)] += 1;
@@ -211,14 +217,14 @@ sub take_action($$) {
 	}
 	# We unconditionally secrete this pheromone for identification
 	# by others of our kin.
-	print $socket $state->{tick}." secrete 65536 1\r\n";
-	print $state->{tick}." secrete 65536 1\r\n";
+	print $socket $state->{tick}." secrete 65535 1\r\n";
+	print $state->{tick}." secrete 65535 1\r\n";
 	if ($state->{gender} == 1) {
-		print $socket $state->{tick}." secrete 65535 1\r\n";
-		print $state->{tick}." secrete 65535 1\r\n";
-	} elsif ($state->{gender} == 2) {
 		print $socket $state->{tick}." secrete 65534 1\r\n";
 		print $state->{tick}." secrete 65534 1\r\n";
+	} elsif ($state->{gender} == 2) {
+		print $socket $state->{tick}." secrete 65533 1\r\n";
+		print $state->{tick}." secrete 65533 1\r\n";
 	}
 	print $socket "\r\n";
 }
