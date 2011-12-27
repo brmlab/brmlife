@@ -86,8 +86,15 @@ sub tick($$) {
 			my $g = 1 + int rand(2);
 			print "[ii] bred $id ($g)\n";
 			#open LOG, ">>bred.log"; print LOG "$state->{agent_id} -> $id ($g)\n"; close LOG;
+
+			# GNU screen is severly broken and will silently fail
+			# to spawn in case of a race.
+			use Time::HiRes;
+			while (!mkdir("_screen_excl")) { Time::HiRes::usleep(5000); }
+			# The child will remove _screen_excl.
 			#system("screen sh -c './$0 $remote_port $id $g; read x'");
 			system("screen ./$0 $remote_port $id $g");
+
 			$state->{last_bred} = $value;
 
 		} elsif ($type eq 'agent_id') {
@@ -291,6 +298,7 @@ if ($bred or not $agentid) {
 }
 print $socket "\r\n";
 print "[ii] agent created\r\n";
+rmdir "_screen_excl";
 
 
 # Start tick loop
